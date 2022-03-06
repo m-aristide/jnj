@@ -8,14 +8,18 @@ LABEL  MAINTENER = aristidemassaga@gmail.com
 #add project files to the usr/src/app folder
 ADD ./webapp /usr/src/app
 
-# add env
-ADD ./env /usr/src/app
-
 #set directoty where CMD will execute 
 WORKDIR /usr/src/app
 
-#source env
-RUN source env/bin/active
+COPY requirements.txt ./
+
+#install mysql
+RUN apt-get install python3-dev default-libmysqlclient-dev build-essential
+
+# Get pip to download and install requirements:
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install mysqlclient
 
 # Expose ports
 EXPOSE 8000
