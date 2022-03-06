@@ -1,8 +1,15 @@
 from django.shortcuts import redirect, render
 from django.db.models import Count
+from django.template.loader import get_template
+from pathlib import Path
+import io
+import base64
 
-from api.diocese import DIOCESES
+from xhtml2pdf import pisa
+import qrcode 
+
 from contacts.models import Participant
+from contacts.diocese import DIOCESES
 
 # Create your views here.
 
@@ -19,14 +26,53 @@ def add_contact(request):
             sexe = request.POST.get('sexe'),
             person_contacter_name = request.POST.get('person_contacter_name'),
             person_contacter_phone = request.POST.get('person_contacter_phone'),
-            paroisse = request.POST.get('paroisse')
+            paroisse = request.POST.get('paroisse'),
+            code = request.POST.get('code')
         )
     
     if request.POST.get('id', None):
         participant.pk = int(request.POST.get('id'))
     
     participant.save()
+
+    # code participant
+    code = code_generator(participant.diocese, participant.pk)
+    if not participant.code == code :
+        participant.code = code
+        participant.save()
+    
+    # production du badge
+    render_pdf_view(participant)
+
     return redirect(f'inscrits/{participant.pk}')
+
+
+def code_generator(diocese: str, id: int): 
+    return f'{diocese.split(" ").pop()[:4].upper()}-2022-JNJ-{"0000"[:4-len(str(id))]}{id}'
+
+def render_pdf_view(participant: Participant):
+    # make qrcode
+    qr = qrcode.QRCode()
+    qr.add_data(participant.code)
+    qr.make(fit=True)
+    img = qr.make_image(fill='black', back_color='white')
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+    # html template
+    template_path = 'user_printer.html'
+    context = {'qrcode': img_str, 'part': participant}
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # fichier pdf
+    STATIC_DIR = Path(__file__).resolve().parent / 'static' / 'badges'
+    output_filename = STATIC_DIR / f'{participant.pk}.pdf'
+    result_file = open(output_filename, "w+b")
+
+    # create a pdf
+    pisa.CreatePDF(html, dest=result_file)
 
 def delete_contact(request, id:int):
     part = Participant.objects.get(pk=id)
@@ -77,4 +123,21 @@ def inscrits(request):
 
 def inscrit(request, id: int):
     part = Participant.objects.get(pk=id)
-    return render(request, 'contacts/inscrit.html', context={'person': part, 'dioceses': DIOCESES})
+    # make qrcode
+    qr = qrcode.QRCode()
+    qr.add_data(part.code)
+    qr.make(fit=True)
+    img = qr.make_image(fill='black', back_color='white')
+
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+    return render(request, 'contacts/inscrit.html', context={
+        'person': part, 
+        'dioceses': DIOCESES, 
+        'createdat': part.createat.strftime("%d/%m/%Y %H:%M"),
+        'qrcode': img_str
+        })
+
+

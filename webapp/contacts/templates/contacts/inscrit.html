@@ -30,7 +30,6 @@
 
     <div class="row">
       <div class="col">
-        <h5> Enregistrement fait le :  {{person.createdat}} </h5>
         <form action="{% url 'add-contact' %}" method="post">
           <div class="mb-3">
             <label for="first_name" class="form-label">Prénom / First name *</label>
@@ -58,9 +57,9 @@
 
           <div class="mb-3">
             <label for="diocese" class="form-label">Diocèse / Diocese *</label>
-            <select class="form-select" name="diocese" value="{{person.diocese}}" required="required" id="diocese">
+            <select class="form-select" name="diocese" required="required" id="diocese">
               {% for diocese in dioceses %}
-              <option value="{{diocese}}">{{diocese}}</option>
+              <option value="{{diocese}}" {% if diocese == person.diocese %} selected {% endif %} >{{diocese}}</option>
               {% endfor %}
             </select>
           </div>
@@ -95,17 +94,25 @@
           </div>
           <br>
           <input type="hidden" name="id" value="{{person.id}}">
+          <input type="hidden" name="code" value="{{person.code}}">
           {% csrf_token %}
           <button type="submit" class="btn btn-primary">Mettre à jour</button>
         </form>
       </div>
       <div class="col">
-        <div class="badge">
-
+        <div class="">
+          <h3> {{person.code}} </h3>
+          <p class="m-0">Enregistrement fait le :  {{createdat}}</p>
+          <p>
+            <img src="data:image/png;base64,{{ qrcode | safe }}">
+          </p>
+          <p>
+            <a class="btn btn-primary" href="{% static 'badges/' %}{{person.id}}.pdf" >Télécharger le badge</a>
+          </p>
         </div>
       </div>
     </div>
-
+    <br><br><br>
   </div>
 </body>
 
