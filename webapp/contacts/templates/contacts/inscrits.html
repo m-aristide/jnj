@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSS only -->
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/jquery.dataTables.min.css' %}">
+
+  <title>INSCRIPTION AUX JNJ EBOLOWA 2022</title>
+</head>
+
+<body>
+  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+      <svg class="bi me-2" width="40" height="32">
+        <use xlink:href="#bootstrap" />
+      </svg>
+      <span class="fs-4">INSCRIPTIONS JNJ EBOLOWA 2022</span>
+    </a>
+
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link active">Inscrits</a></li>
+    </ul>
+  </header>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Inscriptions ({{total}})</h3>
+            <div class="row">
+              <canvas id="main-chart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col p-0">
+        <div class="card no-border">
+          <div class="card-body">
+            <h5 class="card-title">
+              <div class="row">
+                <div class="col p-0">Inscriptions du diocèse ({{total_diocese}}) </div>
+                <div class="col p-0">
+                  <select class="form-select" name="diocese" required="required" id="diocese">
+                    <option selected></option>
+                    {% for diocese in dioceses %}
+                    <option value="{{diocese}}" {% if diocese == selectdiocese %} selected {% endif %}>{{diocese}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </h5>
+            <div class="row">
+              <canvas id="chart-diocese" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col p-0">
+        <div class="card no-border">
+          <div class="card-body">
+            <h5 class="card-title">Répartition par diocèse</h5>
+            <div class="row">
+              <canvas id="chart-by-diocese" height="225"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="row justify-content-end">
+      <div class="col-4">
+        <select class="form-select" name="person_of_diocese" required="required" id="person-of-diocese">
+          <option selected>Tous les dioèces</option>
+          {% for diocese in dioceses %}
+          <option value="{{diocese}}" {% if diocese == person_of_diocese %} selected {% endif %}>{{diocese}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <table class="table table-dark table-striped" id="participants">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Prénom</th>
+            <th scope="col">Téléphone</th>
+            <th scope="col">Diocèse</th>
+            <th scope="col">Paroisse</th>
+            <th scope="col">Genre</th>
+            <th scope="col">Personne à contacter</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <th scope="row">{{user.id}}</th>
+            <td>{{user.first_name}}</td>
+            <td>{{user.last_name}}</td>
+            <td>{{user.phone_number}}</td>
+            <td>{{user.diocese}}</td>
+            <td>{{user.paroisse}}</td>
+            <td>{{user.sexe}}</td>
+            <td>{{user.person_contacter_name}} - {{user.person_contacter_phone}}</td>
+            <td> <a class="btn btn-primary" href="{% url 'inscrit' id=user.id %}">Consulter</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/chart.min.js'%}"></script>
+  <script src="{% static 'js/jquery-3.5.1.min.js'%}"></script>
+  <script src="{% static 'js/jquery.dataTables.min.js'%}"></script>
+  <script src="{% static 'js/dataTables.bootstrap5.min.js'%}"></script>
+
+  <script>
+    var main_chart_datas = {{ main_chart_datas.datas | safe}}
+    var main_chart_labels = {{ main_chart_datas.labels | safe}}
+
+    var chart_by_diocese_datas = {{ chart_by_diocese_datas.datas | safe}}
+    var chart_by_diocese_labels = {{ chart_by_diocese_datas.labels | safe}}
+
+    var chart_of_diocese_datas = {{ chart_of_diocese_datas.datas | safe}}
+    var chart_of_diocese_labels = {{ chart_of_diocese_datas.labels | safe}}
+
+  </script>
+  <script src="{% static 'js/graph.js'%}"></script>
+</body>
+
+</html>

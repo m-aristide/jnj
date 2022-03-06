@@ -1,0 +1,5 @@
+[client]
+database = jnj
+user = supratata
+password = supratata
+default-character-set = utf8

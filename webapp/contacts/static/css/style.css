@@ -1,0 +1,11 @@
+.navbar {
+    background-color: blue;
+    padding: 16px;
+    margin-bottom: 32px;
+}
+
+/* pages inscrits */
+
+.no-border {
+    border: none;
+}

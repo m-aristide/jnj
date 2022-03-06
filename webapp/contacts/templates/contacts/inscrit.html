@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSS only -->
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <title>INSCRIPTION AUX JNJ EBOLOWA 2022</title>
+</head>
+
+<body>
+  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+      <svg class="bi me-2" width="40" height="32">
+        <use xlink:href="#bootstrap" />
+      </svg>
+      <span class="fs-4">INSCRIPTIONS JNJ EBOLOWA 2022</span>
+    </a>
+
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link active">Inscrits</a></li>
+    </ul>
+  </header>
+  <div class="container">
+
+    <div class="row">
+      <div class="col">
+        <h5> Enregistrement fait le :  {{person.createdat}} </h5>
+        <form action="{% url 'add-contact' %}" method="post">
+          <div class="mb-3">
+            <label for="first_name" class="form-label">Prénom / First name *</label>
+            <input type="text" autocomplete="off" name="first_name" required="required" value="{{person.first_name}}"
+              class="form-control" id="first_name">
+          </div>
+
+          <div class="mb-3">
+            <label for="last_name" class="form-label">Nom / Last name *</label>
+            <input type="text" name="last_name" required="required" value="{{person.last_name}}" class="form-control"
+              id="last_name">
+          </div>
+
+          <div class="mb-3">
+            <label for="phone_number" class="form-label">Numéro de téléphone / Phone number *</label>
+            <input type="text" name="phone_number" value="{{person.phone_number}}" required="required"
+              class="form-control" id="phone_number">
+          </div>
+
+          <div class="mb-3">
+            <label for="paroisse" class="form-label">Paroisse / Parish *</label>
+            <input type="text" name="paroisse" value="{{person.paroisse}}" required="required" class="form-control"
+              id="paroisse">
+          </div>
+
+          <div class="mb-3">
+            <label for="diocese" class="form-label">Diocèse / Diocese *</label>
+            <select class="form-select" name="diocese" value="{{person.diocese}}" required="required" id="diocese">
+              {% for diocese in dioceses %}
+              <option value="{{diocese}}">{{diocese}}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-check">
+            <label class="form-check-label" for="femme">Femme / Female </label>
+            <input class="form-check-input" type="radio" {% if person.sexe == "Femme / Female" %} checked {% endif %} name="sexe" value="Femme / Female"
+              id="femme" checked>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label" for="homme">Homme / Male</label>
+            <input class="form-check-input" type="radio" {% if person.sexe == "Homme / Male" %} checked {% endif %}
+              value="Homme / Male" name="sexe" id="homme">
+          </div>
+          <br>
+          <div class="card">
+            <div class="card-body">
+              <h5>Personne à contacter / Contact Person</h5>
+
+              <div class="mb-3">
+                <label for="person_contacter_name" class="form-label"> Nom complet / Full name *</label>
+                <input type="text" name="person_contacter_name" required="required" class="form-control"
+                  id="person_contacter_name" value="{{person.person_contacter_name}}">
+              </div>
+
+              <div class="mb-3">
+                <label for="person_contacter_phone" class="form-label">Numéro de téléphone / Phone number *</label>
+                <input type="text" name="person_contacter_phone" required="required" class="form-control"
+                  id="person_contacter_phone" value="{{person.person_contacter_phone}}">
+              </div>
+            </div>
+          </div>
+          <br>
+          <input type="hidden" name="id" value="{{person.id}}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        </form>
+      </div>
+      <div class="col">
+        <div class="badge">
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
