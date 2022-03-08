@@ -5,6 +5,8 @@ from pathlib import Path
 import io
 import base64
 
+from django.urls import reverse
+
 from xhtml2pdf import pisa
 import qrcode 
 
@@ -27,7 +29,10 @@ def add_contact(request):
             person_contacter_name = request.POST.get('person_contacter_name'),
             person_contacter_phone = request.POST.get('person_contacter_phone'),
             paroisse = request.POST.get('paroisse'),
-            code = request.POST.get('code')
+            code = request.POST.get('code'),
+            allergies = request.POST.get('allergies'),
+            groupe_sanguin = request.POST.get('groupe_sanguin'),
+            maladies = request.POST.get('maladies')
         )
     
     if request.POST.get('id', None):
@@ -42,8 +47,10 @@ def add_contact(request):
         participant.save()
     
     # production du badge
-    render_pdf_view(participant)
+    if not participant.produit :
+        render_pdf_view(participant)
 
+    request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
     return redirect(f'inscrits/{participant.pk}')
 
 
@@ -62,7 +69,9 @@ def render_pdf_view(participant: Participant):
 
     # html template
     template_path = 'user_printer.html'
-    context = {'qrcode': img_str, 'part': participant}
+    name = (participant.last_name + ' ' + participant.first_name)[:22] + '.'
+    diocese = ' '.join(participant.diocese.split(' ')[2:])
+    context = {'qrcode': img_str, 'part': participant, 'name': name, 'diocese': diocese}
     template = get_template(template_path)
     html = template.render(context)
 
@@ -86,7 +95,7 @@ def inscrits(request):
     if person_of_diocese :
         users = Participant.objects.filter(diocese = person_of_diocese)
     else :
-        users = Participant.objects.all()
+        users = Participant.objects.all().order_by('-pk')
 
     # répartition pour un diocese
     chart_of_diocese = Participant.objects.filter(diocese = diocese).values('create_date').annotate(total=Count('create_date')).order_by('create_date')
@@ -108,6 +117,9 @@ def inscrits(request):
     for data in chart_by_diocese :
         chart_by_diocese_datas['labels'].append(data.get('diocese'))
         chart_by_diocese_datas['datas'].append(data.get('total'))
+    
+    # nombre de carte produite
+    produit = Participant.objects.filter(produit = True).annotate(total=Count('pk')).count()
 
     return render(request, 'contacts/inscrits.html', context={
         'users': users,
@@ -116,6 +128,7 @@ def inscrits(request):
         'chart_by_diocese_datas': chart_by_diocese_datas,
         'chart_of_diocese_datas': chart_of_diocese_datas,
         'total_diocese': sum(chart_of_diocese_datas['datas']),
+        'produit': produit,
         'dioceses': DIOCESES, 
         'selectdiocese': diocese,
         'person_of_diocese': person_of_diocese
@@ -133,11 +146,25 @@ def inscrit(request, id: int):
     img.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
+    # gestion alerte
+    alerte = request.session.get('alerte', None)
+    if alerte :
+        del request.session['alerte']
+
     return render(request, 'contacts/inscrit.html', context={
         'person': part, 
+        'alerte': alerte,
         'dioceses': DIOCESES, 
         'createdat': part.createat.strftime("%d/%m/%Y %H:%M"),
         'qrcode': img_str
         })
+
+def check_badge_produit(request) :
+
+    part = Participant.objects.get(pk=int(request.POST.get('id')))
+    part.produit = True
+    part.save()
+    request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
+    return redirect(f'inscrits/{part.pk}')
 
 

@@ -6,8 +6,9 @@
     actions();
 })()
 
-$(document).ready(function() {
+$(document).ready(function () {
     $('#participants').DataTable({
+        "order": [],
         "language": {
             "lengthMenu": "Afficher _MENU_ par page",
             "zeroRecords": "Aucun participant",
@@ -17,22 +18,22 @@ $(document).ready(function() {
             "infoFiltered": "(filtered from _MAX_ total records)",
             "search": "Rechercher : ",
             "paginate": {
-                "first":      "Première page",
-                "last":       "Dernière page",
-                "next":       "Suivant",
-                "previous":   "Précédent"
+                "first": "Première page",
+                "last": "Dernière page",
+                "next": "Suivant",
+                "previous": "Précédent"
             },
         }
     });
-} );
+});
 
 function actions() {
-    var selectDiocese =  document.getElementById('diocese');
-    selectDiocese.onchange = function(e) {
+    var selectDiocese = document.getElementById('diocese');
+    selectDiocese.onchange = function (e) {
         window.location = '/inscrits/?diocese=' + selectDiocese.value + '&person_of_diocese=' + selectPersonOfDiocese.value;
     }
-    var selectPersonOfDiocese =  document.getElementById('person-of-diocese');
-    selectPersonOfDiocese.onchange = function(e) {
+    var selectPersonOfDiocese = document.getElementById('person-of-diocese');
+    selectPersonOfDiocese.onchange = function (e) {
         window.location = '/inscrits/?diocese=' + selectDiocese.value + '&person_of_diocese=' + selectPersonOfDiocese.value;
     }
 }
@@ -41,7 +42,7 @@ function chartOfDiocese() {
     let chart = document.getElementById('chart-diocese');
     new Chart(chart, {
         type: 'line',
-        options: {  
+        options: {
             responsive: true,
         },
         data: {
@@ -52,7 +53,7 @@ function chartOfDiocese() {
                     data: chart_of_diocese_datas,
                     fill: false,
                     borderColor: 'rgb(128,128,255)',
-                    
+
                 }
             ]
         }
@@ -63,7 +64,7 @@ function chartByDiocese() {
     var chart = document.getElementById('chart-by-diocese');
     new Chart(chart, {
         type: 'pie',
-        options: {  
+        options: {
             responsive: true,
             maintainAspectRatio: false
         },

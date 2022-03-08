@@ -4,7 +4,6 @@ FROM python:3.8
 # File Author / Maintainer
 LABEL  MAINTENER = aristidemassaga@gmail.com
 
-
 #add project files to the usr/src/app folder
 ADD ./webapp /usr/src/app
 
@@ -14,6 +13,7 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 
 #install mysql
+RUN apt update
 RUN apt-get install python3-dev default-libmysqlclient-dev build-essential
 
 # Get pip to download and install requirements:

@@ -13,6 +13,10 @@ class Participant(models.Model):
     person_contacter_name = models.CharField(max_length=100)
     paroisse = models.CharField(max_length=100)
     person_contacter_phone = models.CharField(max_length=100)
+    allergies = models.CharField(max_length=255, null=True)
+    groupe_sanguin = models.CharField(max_length=3, null=True)
+    maladies = models.CharField(max_length=500,null=True)
+    produit = models.BooleanField(default=False)
     create_date = models.DateField(default=date.today)
     createat = models.DateTimeField(default=datetime.now)
 

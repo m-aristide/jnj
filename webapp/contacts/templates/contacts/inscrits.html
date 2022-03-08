@@ -14,25 +14,30 @@
   <title>INSCRIPTION AUX JNJ EBOLOWA 2022</title>
 </head>
 
-<body>
-  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-      <svg class="bi me-2" width="40" height="32">
-        <use xlink:href="#bootstrap" />
-      </svg>
-      <span class="fs-4">INSCRIPTIONS JNJ EBOLOWA 2022</span>
-    </a>
+<body class="no-bg">
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">JNJ EBOLOWA 2022</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <ul class="nav nav-pills">
-      <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link active">Inscrits</a></li>
-    </ul>
+        <ul class="nav nav-pills">
+          <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link active">Inscrits</a></li>
+        </ul>
+
+      </div>
+    </nav>
   </header>
-  <div class="container">
+
+  <div class="container mt-5">
     <div class="row">
-      <div class="col">
+      <div class="col p-0">
         <div class="card">
           <div class="card-body">
-            <h3 class="card-title">Inscriptions ({{total}})</h3>
+            <h3 class="card-title">Inscriptions ({{total}}) / Badges produits ({{produit}})</h3>
             <div class="row">
               <canvas id="main-chart" height="200"></canvas>
             </div>
@@ -41,7 +46,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col p-0">
+      <div class="col-12 col-sm-6 p-0">
         <div class="card no-border">
           <div class="card-body">
             <h5 class="card-title">
@@ -51,7 +56,8 @@
                   <select class="form-select" name="diocese" required="required" id="diocese">
                     <option selected></option>
                     {% for diocese in dioceses %}
-                    <option value="{{diocese}}" {% if diocese == selectdiocese %} selected {% endif %}>{{diocese}}</option>
+                    <option value="{{diocese}}" {% if diocese == selectdiocese %} selected {% endif %}>{{diocese}}
+                    </option>
                     {% endfor %}
                   </select>
                 </div>
@@ -63,7 +69,7 @@
           </div>
         </div>
       </div>
-      <div class="col p-0">
+      <div class="col-12 col-sm-6 p-0">
         <div class="card no-border">
           <div class="card-body">
             <h5 class="card-title">Répartition par diocèse</h5>
@@ -78,7 +84,7 @@
     <hr>
     <br>
     <div class="row justify-content-end">
-      <div class="col-4">
+      <div class="col-8 col-sm-4">
         <select class="form-select" name="person_of_diocese" required="required" id="person-of-diocese">
           <option selected>Tous les dioèces</option>
           {% for diocese in dioceses %}
@@ -106,8 +112,8 @@
           {% for user in users %}
           <tr>
             <th scope="row">{{user.code}}</th>
-            <td>{{user.first_name}}</td>
             <td>{{user.last_name}}</td>
+            <td>{{user.first_name}}</td>
             <td>{{user.phone_number}}</td>
             <td>{{user.diocese}}</td>
             <td>{{user.paroisse}}</td>
@@ -121,6 +127,18 @@
 
     </div>
   </div>
+
+  <!-- FOOTER -->
+  <footer class="d-flex flex-wrap justify-content-between align-items-center border-top">
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+        <svg class="bi" width="30" height="24">
+          <use xlink:href="#bootstrap" />
+        </svg>
+      </a>
+      <span class="text-muted">&copy; 2022 m-aristide - 690784116</span>
+    </div>
+  </footer>
 
   <script src="{% static 'js/chart.min.js'%}"></script>
   <script src="{% static 'js/jquery-3.5.1.min.js'%}"></script>

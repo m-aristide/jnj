@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from contacts.views import index, add_contact, delete_contact, inscrits, inscrit
+from contacts.views import index, add_contact, delete_contact, inscrits, inscrit, check_badge_produit
 
 urlpatterns = [
     path('', index, name='index'),
     path('add', add_contact, name='add-contact'),
+    path('check-badge-produit', check_badge_produit, name='check-badge-produit'),
     path('inscrits/', inscrits, name='inscrits'),
     path('inscrits/<int:id>', inscrit, name='inscrit'),
     path('delete/<int:id>', delete_contact, name='delete-contact'),

@@ -7,113 +7,184 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- CSS only -->
+  <link
+  href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+  rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
   <title>INSCRIPTION AUX JNJ EBOLOWA 2022</title>
 </head>
 
-<body>
-  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-      <svg class="bi me-2" width="40" height="32">
-        <use xlink:href="#bootstrap" />
-      </svg>
-      <span class="fs-4">INSCRIPTIONS JNJ EBOLOWA 2022</span>
-    </a>
+<body class="no-bg">
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">JNJ EBOLOWA 2022</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <ul class="nav nav-pills">
-      <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link active">Inscrits</a></li>
-    </ul>
+        <ul class="nav nav-pills">
+          <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link active">Inscrits</a></li>
+        </ul>
+
+      </div>
+    </nav>
   </header>
-  <div class="container">
 
-    <div class="row">
-      <div class="col">
-        <form action="{% url 'add-contact' %}" method="post">
-          <div class="mb-3">
-            <label for="first_name" class="form-label">Prénom / First name *</label>
-            <input type="text" autocomplete="off" name="first_name" required="required" value="{{person.first_name}}"
-              class="form-control" id="first_name">
-          </div>
+  <main class="no-bg">
+    <div class="container" style="margin-top: 120px;">
+      {% if alerte %}
+        <div class="alert alert-dismissible {% if alerte.success %} alert-success {% else %} alert-danger  {% endif %}" role="alert">
+          {{alerte.message}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+      <div class="row">
+        <div class="col">
+          <form class="card p-5 " action="{% url 'add-contact' %}" method="post">
 
-          <div class="mb-3">
-            <label for="last_name" class="form-label">Nom / Last name *</label>
-            <input type="text" name="last_name" required="required" value="{{person.last_name}}" class="form-control"
-              id="last_name">
-          </div>
+            <h1 class="title p-3  text-center">Formulaire d'enregistrement / Registration form </h1>
 
-          <div class="mb-3">
-            <label for="phone_number" class="form-label">Numéro de téléphone / Phone number *</label>
-            <input type="text" name="phone_number" value="{{person.phone_number}}" required="required"
-              class="form-control" id="phone_number">
-          </div>
+            <div class="mb-3">
+              <label for="first_name" class="form-label">Prénom / First name *</label>
+              <input type="text" autocomplete="off" name="first_name" required="required" value="{{person.first_name}}"
+                class="form-control" id="first_name">
+            </div>
 
-          <div class="mb-3">
-            <label for="paroisse" class="form-label">Paroisse / Parish *</label>
-            <input type="text" name="paroisse" value="{{person.paroisse}}" required="required" class="form-control"
-              id="paroisse">
-          </div>
+            <div class="mb-3">
+              <label for="last_name" class="form-label">Nom / Last name *</label>
+              <input type="text" name="last_name" required="required" value="{{person.last_name}}" class="form-control"
+                id="last_name">
+            </div>
 
-          <div class="mb-3">
-            <label for="diocese" class="form-label">Diocèse / Diocese *</label>
-            <select class="form-select" name="diocese" required="required" id="diocese">
-              {% for diocese in dioceses %}
-              <option value="{{diocese}}" {% if diocese == person.diocese %} selected {% endif %} >{{diocese}}</option>
-              {% endfor %}
-            </select>
-          </div>
+            <div class="mb-3">
+              <label for="phone_number" class="form-label">Numéro de téléphone / Phone number *</label>
+              <input type="text" name="phone_number" value="{{person.phone_number}}" required="required"
+                class="form-control" id="phone_number">
+            </div>
 
-          <div class="form-check">
-            <label class="form-check-label" for="femme">Femme / Female </label>
-            <input class="form-check-input" type="radio" {% if person.sexe == "Femme / Female" %} checked {% endif %} name="sexe" value="Femme / Female"
-              id="femme" checked>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label" for="homme">Homme / Male</label>
-            <input class="form-check-input" type="radio" {% if person.sexe == "Homme / Male" %} checked {% endif %}
-              value="Homme / Male" name="sexe" id="homme">
-          </div>
-          <br>
-          <div class="card">
-            <div class="card-body">
-              <h5>Personne à contacter / Contact Person</h5>
+            <div class="mb-3">
+              <label for="paroisse" class="form-label">Paroisse / Parish *</label>
+              <input type="text" name="paroisse" value="{{person.paroisse}}" required="required" class="form-control"
+                id="paroisse">
+            </div>
 
-              <div class="mb-3">
-                <label for="person_contacter_name" class="form-label"> Nom complet / Full name *</label>
-                <input type="text" name="person_contacter_name" required="required" class="form-control"
-                  id="person_contacter_name" value="{{person.person_contacter_name}}">
-              </div>
+            <div class="mb-3">
+              <label for="diocese" class="form-label">Diocèse / Diocese *</label>
+              <select class="form-select" name="diocese" required="required" id="diocese">
+                {% for diocese in dioceses %}
+                <option value="{{diocese}}" {% if diocese == person.diocese %} selected {% endif %}>{{diocese}}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-              <div class="mb-3">
-                <label for="person_contacter_phone" class="form-label">Numéro de téléphone / Phone number *</label>
-                <input type="text" name="person_contacter_phone" required="required" class="form-control"
-                  id="person_contacter_phone" value="{{person.person_contacter_phone}}">
+            <div class="form-check">
+              <label class="form-check-label" for="femme">Femme / Female </label>
+              <input class="form-check-input" type="radio" {% if person.sexe == "Femme / Female" %} checked {% endif %}
+                name="sexe" value="Femme / Female" id="femme" checked>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label" for="homme">Homme / Male</label>
+              <input class="form-check-input" type="radio" {% if person.sexe == "Homme / Male" %} checked {% endif %}
+                value="Homme / Male" name="sexe" id="homme">
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5>Informations médicales / Medical information</h5>
+                <br>
+                <div class="row">
+                  <div class="col col-12 col-sm-12">
+                    <label for="allergies" class="form-label">Allergies / Allergies</label>
+                    <input type="text" name="allergies" value="{{person.allergies}}" class="form-control" id="allergies">
+                  </div>
+                  <div class="col col-12 col-sm-12">
+                    <label for="groupe_sanguin" class="form-label">Groupe sanguin / Blood group </label>
+                    <select class="form-select" name="groupe_sanguin" id="groupe_sanguin">
+                      <option></option>
+                      <option value="A-" {% if person.groupe_sanguin == "A-" %} selected {% endif %}>A-</option>
+                      <option value="A+" {% if person.groupe_sanguin == "A+" %} selected {% endif %}>A+</option>
+                      <option value="O-" {% if person.groupe_sanguin == "O-" %} selected {% endif %}>O-</option>
+                      <option value="O+" {% if person.groupe_sanguin == "O+" %} selected {% endif %}>O+</option>
+                      <option value="B-" {% if person.groupe_sanguin == "B-" %} selected {% endif %}>B-</option>
+                      <option value="B+" {% if person.groupe_sanguin == "B+" %} selected {% endif %}>B+</option>
+                      <option value="AB-" {% if person.groupe_sanguin == "AB-" %} selected {% endif %}>AB-</option>
+                      <option value="AB+" {% if person.groupe_sanguin == "AB+" %} selected {% endif %}>AB+</option>
+                    </select>
+                  </div>
+                  <div class="col col-12 col-sm-12">
+                    <label for="maladies" class="form-label">Maladies / Diseases</label>
+                    <textarea name="maladies" class="form-control" value="{{person.maladies}}" id="maladies" cols="30" rows="3"></textarea>
+                  </div>
+                </div>
               </div>
             </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5>Personne à contacter / Contact Person</h5>
+
+                <div class="mb-3">
+                  <label for="person_contacter_name" class="form-label"> Nom complet / Full name *</label>
+                  <input type="text" name="person_contacter_name" required="required" class="form-control"
+                    id="person_contacter_name" value="{{person.person_contacter_name}}">
+                </div>
+
+                <div class="mb-3">
+                  <label for="person_contacter_phone" class="form-label">Numéro de téléphone / Phone number *</label>
+                  <input type="text" name="person_contacter_phone" required="required" class="form-control"
+                    id="person_contacter_phone" value="{{person.person_contacter_phone}}">
+                </div>
+              </div>
+            </div>
+            <br>
+            <input type="hidden" name="id" value="{{person.id}}">
+            <input type="hidden" name="code" value="{{person.code}}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+          </form>
+        </div>
+        <div class="col">
+          <div class="">
+            <h3> {{person.code}} </h3>
+            <p class="m-0">Enregistrement fait le : {{createdat}}</p>
+            <p>
+              <img src="data:image/png;base64,{{ qrcode | safe }}">
+            </p>
+            <p>
+              <a class="btn btn-primary" target="_blank" href="{% static 'badges/' %}{{person.id}}.pdf">Télécharger le badge</a>
+            </p>
+            {% if not person.produit %}
+            <p>
+              <form action="{% url 'check-badge-produit' %}" method="post">
+                <input type="hidden" name="id" value="{{person.id}}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger"> Badget Produit</button>
+              </form>
+            </p>
+            {% endif %}
           </div>
-          <br>
-          <input type="hidden" name="id" value="{{person.id}}">
-          <input type="hidden" name="code" value="{{person.code}}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary">Mettre à jour</button>
-        </form>
-      </div>
-      <div class="col">
-        <div class="">
-          <h3> {{person.code}} </h3>
-          <p class="m-0">Enregistrement fait le :  {{createdat}}</p>
-          <p>
-            <img src="data:image/png;base64,{{ qrcode | safe }}">
-          </p>
-          <p>
-            <a class="btn btn-primary" href="{% static 'badges/' %}{{person.id}}.pdf" >Télécharger le badge</a>
-          </p>
         </div>
       </div>
     </div>
-    <br><br><br>
-  </div>
+  </main>
+  <!-- FOOTER -->
+  <footer class="d-flex flex-wrap justify-content-between align-items-center border-top">
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+        <svg class="bi" width="30" height="24">
+          <use xlink:href="#bootstrap" />
+        </svg>
+      </a>
+      <span class="text-muted">&copy; 2022 m-aristide - 690784116</span>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
+
 
 </html>
