@@ -30,9 +30,17 @@
             -pdf-frame-content: qrcode;
             left: 145pt; top: 125pt; width: 300pt;
         }
+        @frame code { /* Another static Frame */
+            -pdf-frame-content: code;
+            left: 157pt; top: 115pt; width: 100pt;
+        }
         @frame person_contacter_phone { /* Another static Frame */
             -pdf-frame-content: person_contacter_phone;
             left: 160pt; top: 395pt; width: 95pt;
+        }
+        @frame person_contacter_name { /* Another static Frame */
+            -pdf-frame-content: person_contacter_name;
+            left: 145pt; top: 383pt; width: 120pt;
         }
     }
     .fond {
@@ -86,12 +94,30 @@
         text-align: center;
         margin: 0px;
         padding: 0px;
-        line-height: 20px;
+        line-height: 15px;
         font-weight: bold;
+    }
+    #person_contacter_name {
+        color: #fff;
+        font-size: 1rem;
+        background-color: #e96a25;
+        text-align: center;
+        margin: 0px;
+        padding: 0px;
+        line-height: 12px;
+        font-weight: bold;
+    }
+    #code {
+        text-align: center;
+        font-size: 1.5rem;
     }
 </style>
 
 <body>
+
+    <div id="code">
+        {{part.code}}
+    </div>
 
     <!-- Content for Static Frame 'qrcode' -->
     <div id="qrcode">
@@ -112,6 +138,10 @@
 
     <div id="diocese">
         {{diocese}}
+    </div>
+
+    <div id="person_contacter_name">
+        {{person_contacter_name}}
     </div>
 
     <div id="person_contacter_phone">

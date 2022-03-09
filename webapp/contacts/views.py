@@ -69,9 +69,11 @@ def render_pdf_view(participant: Participant):
 
     # html template
     template_path = 'user_printer.html'
-    name = (participant.last_name + ' ' + participant.first_name)[:22] + '.'
+    name = participant.last_name + ' ' + participant.first_name
+    name = (name[:22] + '.') if len(name) > 22 else name
     diocese = ' '.join(participant.diocese.split(' ')[2:])
-    context = {'qrcode': img_str, 'part': participant, 'name': name, 'diocese': diocese}
+    person_contacter_name = (participant.person_contacter_name[:20] + '.') if len(participant.person_contacter_name) > 20 else participant.person_contacter_name
+    context = {'qrcode': img_str, 'part': participant, 'name': name, 'diocese': diocese, 'person_contacter_name': person_contacter_name}
     template = get_template(template_path)
     html = template.render(context)
 
