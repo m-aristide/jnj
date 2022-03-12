@@ -1,0 +1,171 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.88.1">
+  <title>JNJ EBOLOWA 2022</title>
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+  <!-- Custom styles for this template -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body class="no-bg">
+
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">JNJ EBOLOWA 2022</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <ul class="nav nav-pills">
+          <li class="nav-item"><a href="{% url 'sites' %}" class="nav-link active">Sites</a></li>
+          <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link">Inscrits</a></li>
+        </ul>
+
+      </div>
+    </nav>
+  </header>
+
+  <div class="container" style="margin-top: 120px;">
+    {% if alerte %}
+    <div class="alert alert-dismissible {% if alerte.success %} alert-success {% else %} alert-danger  {% endif %}"
+      role="alert">
+      {{alerte.message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col">
+        <button class="btn {% if site_edit %} btn-secondary {% else %} btn-primary {% endif %}"
+          id="btn_form_ajouter_site">
+          {% if site_edit %} Annuler {% else %} Ajouter un site {% endif %}
+        </button>
+
+        <form class="card p-3" style="display: {% if site_edit %} block {% else %} none {% endif %} ;"
+          id="form_ajouter_site" action="{% url 'ajouter-site' %}" method="post">
+
+          <div class="mb-1">
+            <label for="designation" class="form-label">Désignation *</label>
+            <input type="text" name="designation" {% if site_edit %} value="{{site_edit.designation}}" {% endif %}
+              required="required" class="form-control" id="designation">
+          </div>
+
+          <div class="mb-1">
+            <label for="description" class="form-label">Informations supplémentaires</label>
+            <textarea name="description" class="form-control" id="description" cols="30"
+              rows="2">{% if site_edit %}{{site_edit.description}}{% endif %}</textarea>
+          </div>
+          <hr>
+          <h5>Dortoirs
+            <button type="button" class="btn btn-primary" id="ajouter_dortoir">Ajouter un dortoir</button>
+          </h5>
+          <table class="table">
+            <thead>
+              <th>Code</th>
+              <th>Capacité</th>
+              <th></th>
+            </thead>
+            <tbody id="tbody_dortoitrs"></tbody>
+          </table>
+          <input type="hidden" name="id" id="id_site" value="{{site_edit.id}}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Enregistrer le site</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Sites</th>
+            <th>Informations supplémentaires</th>
+            <th>Dortoirs</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for site in sites %}
+          <tr>
+            <td> {{site.designation}} </td>
+            <td>{{site.description}}</td>
+            <td>
+              <table class="table">
+                <tbody>
+                  {% for dortoir in site.dortoirs %}
+                  <tr>
+                    <td>{{dortoir.code}}</td>
+                    <td>{{dortoir.capacite}}</td>
+                    <td>{{dortoir.occupation}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </td>
+            <td>
+              <a href="{% url 'site-edit' id=site.id %}" class="btn btn-primary">Modifier</a>
+              <form action="{% url 'supprimer-site' %}" style="display: inline-block;" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{site.id}}">
+                <button class="btn btn-danger"> Supprimer </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="d-flex flex-wrap justify-content-between align-items-center border-top">
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+        <svg class="bi" width="30" height="24">
+          <use xlink:href="#bootstrap" />
+        </svg>
+      </a>
+      <span class="text-muted">&copy; 2022 m-aristide - 690784116</span>
+    </div>
+  </footer>
+
+  {% if site_edit %}
+  <script>
+    var csrf = '{% csrf_token %}'
+    var dortoirs_du_site = {{ site_edit.dortoirs | safe}}
+  </script>
+  {% endif %}
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/sites.js'%}"></script>
+</body>
+
+</html>

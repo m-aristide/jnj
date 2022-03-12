@@ -18,6 +18,8 @@ from django.urls import path
 
 from contacts.views import index, add_contact, delete_contact, inscrits, inscrit, check_badge_produit
 
+from dortoires.views import sites, ajouter_site, supprimer_site, supprimer_dortoir
+
 urlpatterns = [
     path('', index, name='index'),
     path('add', add_contact, name='add-contact'),
@@ -25,5 +27,12 @@ urlpatterns = [
     path('inscrits/', inscrits, name='inscrits'),
     path('inscrits/<int:id>', inscrit, name='inscrit'),
     path('delete/<int:id>', delete_contact, name='delete-contact'),
+    
+    # sites urls
+    path('sites', sites, name='sites'),
+    path('sites/<int:id>', sites, name='site-edit'),
+    path('ajouter-site', ajouter_site, name='ajouter-site'),
+    path('supprimer-site', supprimer_site, name='supprimer-site'),
+    path('supprimer-dortoir', supprimer_dortoir, name='supprimer-dortoir'),
     path('admin/', admin.site.urls),
 ]
