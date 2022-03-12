@@ -27,6 +27,7 @@
         </button>
 
         <ul class="nav nav-pills">
+          <li class="nav-item"><a href="{% url 'encadreurs' %}" class="nav-link">Encadreurs</a></li>
           <li class="nav-item"><a href="{% url 'sites' %}" class="nav-link">Sites</a></li>
           <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link active">Inscrits</a></li>
         </ul>
@@ -45,9 +46,9 @@
       {% endif %}
       <div class="row">
         <div class="col">
-          <form class="card p-5 " action="{% url 'add-contact' %}" method="post">
+          <form class="card p-3 " action="{% url 'add-contact' %}" method="post">
 
-            <h1 class="title p-3  text-center">Formulaire d'enregistrement / Registration form </h1>
+            <h1 class="title p-3  text-center">Formulaire d'enregistrement <br> Registration form </h1>
 
             <div class="mb-3">
               <label for="first_name" class="form-label">Prénom / First name *</label>
@@ -141,6 +142,11 @@
                 </div>
               </div>
             </div>
+
+            <div class="mb-3">
+              <label for="encadreur" class="form-label">Mon code encadreur</label>
+              <input type="text" name="encadreur" {% if person.encadreur %} value="{{person.encadreur}}" {% endif %} class="form-control" id="encadreur">
+            </div>
             <br>
             <input type="hidden" name="id" value="{{person.id}}">
             <input type="hidden" name="code" value="{{person.code}}">
@@ -153,20 +159,25 @@
             <h3> {{person.code}} </h3>
             <p class="m-0">Enregistrement fait le : {{createdat}}</p>
             <p>
-              <img src="data:image/png;base64,{{ qrcode | safe }}">
+              <blockquote>
+                Logement: <br>
+                <strong>Site :</strong> {{person.dortoir.site.designation}} ({{person.dortoir.site.description}}) <br>
+                <strong>Dortoir :</strong>{{person.dortoir.code}}
+              </blockquote>
             </p>
             <p>
-              <a class="btn btn-primary" target="_blank" href="{% static 'badges/' %}{{person.id}}.pdf">Télécharger le badge</a>
+              <img style="height:150px" src="data:image/png;base64,{{ qrcode | safe }}">
             </p>
-            {% if not person.produit %}
             <p>
-              <form action="{% url 'check-badge-produit' %}" method="post">
-                <input type="hidden" name="id" value="{{person.id}}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger"> Badget Produit</button>
-              </form>
+              <a class="btn btn-primary" style="display: inline-block;" target="_blank" href="{% static 'badges/' %}{{person.id}}.pdf">Télécharger le badge</a>
+              {% if not person.produit %}
+                <form style="display: inline-block;" action="{% url 'check-badge-produit' %}" method="post">
+                  <input type="hidden" name="id" value="{{person.id}}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger"> Badget Produit</button>
+                </form>
+              {% endif %}
             </p>
-            {% endif %}
           </div>
         </div>
       </div>

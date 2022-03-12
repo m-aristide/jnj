@@ -46,6 +46,7 @@
         </button>
 
         <ul class="nav nav-pills">
+          <li class="nav-item"><a href="{% url 'encadreurs' %}" class="nav-link">Encadreurs</a></li>
           <li class="nav-item"><a href="{% url 'sites' %}" class="nav-link">Sites</a></li>
           <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link">Inscrits</a></li>
         </ul>
@@ -111,7 +112,7 @@
     <div class="container marketing">
       <form class="card p-5 " action="{% url 'add-contact' %}" method="post">
 
-        <h1 class="title p-3  text-center">Formulaire d'enregistrement / Registration form </h1>
+        <h1 class="title p-3  text-center">Formulaire d'enregistrement <br> Registration form </h1>
 
         <div class="mb-3">
           <label for="first_name" class="form-label">Prénom / First name *</label>
@@ -203,6 +204,11 @@
                 id="person_contacter_phone">
             </div>
           </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="encadreur" class="form-label">Mon code encadreur</label>
+          <input type="text" name="encadreur" class="form-control" id="encadreur">
         </div>
         <br>
 

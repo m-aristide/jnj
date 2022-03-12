@@ -25,6 +25,8 @@
         </button>
 
         <ul class="nav nav-pills">
+          <li class="nav-item"><a href="{% url 'encadreurs' %}" class="nav-link">Encadreurs</a></li>
+          <li class="nav-item"><a href="{% url 'sites' %}" class="nav-link">Sites</a></li>
           <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link active">Inscrits</a></li>
         </ul>
 
@@ -98,6 +100,7 @@
         <thead>
           <tr>
             <th scope="col">#</th>
+            <th scope="col">Site / Dortoir</th>
             <th scope="col">Nom</th>
             <th scope="col">Prénom</th>
             <th scope="col">Téléphone</th>
@@ -112,6 +115,7 @@
           {% for user in users %}
           <tr>
             <th scope="row">{{user.code}}</th>
+            <th scope="row">{{user.dortoir.site.designation}} / {{user.dortoir.code}}</th>
             <td>{{user.last_name}}</td>
             <td>{{user.first_name}}</td>
             <td>{{user.phone_number}}</td>

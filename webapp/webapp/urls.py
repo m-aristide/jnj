@@ -17,8 +17,8 @@ from django.contrib import admin
 from django.urls import path
 
 from contacts.views import index, add_contact, delete_contact, inscrits, inscrit, check_badge_produit
-
 from dortoires.views import sites, ajouter_site, supprimer_site, supprimer_dortoir
+from contacts.views_encadreurs import encadreurs, creer_code_encadreur, delete_code_encadreur
 
 urlpatterns = [
     path('', index, name='index'),
@@ -27,6 +27,11 @@ urlpatterns = [
     path('inscrits/', inscrits, name='inscrits'),
     path('inscrits/<int:id>', inscrit, name='inscrit'),
     path('delete/<int:id>', delete_contact, name='delete-contact'),
+
+    # encadreurs
+    path('encadreurs', encadreurs, name='encadreurs'),
+    path('encadreurs/creer', creer_code_encadreur, name='creer-code-encadreur'),
+    path('encadreurs/delete', delete_code_encadreur, name='delete-code-encadreur'),
     
     # sites urls
     path('sites', sites, name='sites'),

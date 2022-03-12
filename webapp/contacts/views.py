@@ -10,8 +10,9 @@ from django.urls import reverse
 from xhtml2pdf import pisa
 import qrcode 
 
-from contacts.models import Participant
+from contacts.models import Participant, CodeEncadreur
 from contacts.diocese import DIOCESES
+from dortoires.models import Dortoire
 
 # Create your views here.
 
@@ -37,7 +38,21 @@ def add_contact(request):
     
     if request.POST.get('id', None):
         participant.pk = int(request.POST.get('id'))
+
+    # code encadreur
+    if request.POST.get('encadreur', None):
+        code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'))
+        if code and code.active == False : 
+            code.active = True
+            participant.encadreur = code.code
+            code.save()
     
+    if not participant.dortoir:
+        participant.dortoir = select_dortoir()
+        # update occupation
+        participant.dortoir.occupation +=1
+        participant.dortoir.save()
+
     participant.save()
 
     # code participant
@@ -56,6 +71,13 @@ def add_contact(request):
 
 def code_generator(diocese: str, id: int): 
     return f'{diocese.split(" ").pop()[:4].upper()}-2022-JNJ-{"0000"[:4-len(str(id))]}{id}'
+
+def select_dortoir():
+    dortoirs = [dortoir for dortoir in Dortoire.objects.all() if dortoir.occupation < dortoir.capacite ]
+    if len(dortoirs) < 0 :
+        return None
+    else:
+        return dortoirs[0]
 
 def render_pdf_view(participant: Participant):
     # make qrcode

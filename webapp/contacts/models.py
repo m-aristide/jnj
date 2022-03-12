@@ -2,9 +2,10 @@ from datetime import date, datetime
 
 from django.db import models
 
-class Participant(models.Model):
+from dortoires.models import Dortoire
 
-    code = models.CharField(max_length=20, default='')
+class Participant(models.Model):
+    code = models.CharField(max_length=20, null=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=100)
@@ -17,6 +18,8 @@ class Participant(models.Model):
     groupe_sanguin = models.CharField(max_length=3, null=True)
     maladies = models.CharField(max_length=500,null=True)
     produit = models.BooleanField(default=False)
+    encadreur = models.CharField(max_length=20,null=True)
+    dortoir = models.ForeignKey(Dortoire, on_delete=models.SET_NULL, blank=True, null=True)
     create_date = models.DateField(default=date.today)
     createat = models.DateTimeField(default=datetime.now)
 
@@ -26,6 +29,10 @@ class Participant(models.Model):
     def __str__(self):
         return f"Participant({self.pk}, {self.first_name}, {self.last_name}{self.phone_number}{self.diocese})"
 
+
+class CodeEncadreur(models.Model):
+    code = models.CharField(max_length=20, unique=True, null=True)
+    active = models.BooleanField(default=False)
 
 if __name__ == "__main__":
     martin = Participant(first_name = "Martin", last_name = "Voisin")
