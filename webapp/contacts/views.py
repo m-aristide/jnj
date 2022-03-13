@@ -81,7 +81,7 @@ def select_dortoir():
 
 def render_pdf_view(participant: Participant):
     # make qrcode
-    qr = qrcode.QRCode()
+    qr = qrcode.QRCode(border=0)
     qr.add_data(participant.code)
     qr.make(fit=True)
     img = qr.make_image(fill='black', back_color='white')
@@ -90,13 +90,24 @@ def render_pdf_view(participant: Participant):
     img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
     # html template
-    template_path = 'user_printer.html'
-    name = participant.last_name + ' ' + participant.first_name
-    name = (name[:22] + '.') if len(name) > 22 else name
-    diocese = ' '.join(participant.diocese.split(' ')[2:])
+    
+    name = participant.last_name.split(' ')[0] + ' ' + participant.first_name.split(' ')[0]
+    name = (name[:15] + '.') if len(name) > 15 else name
+
+    diocese = ' '.join(participant.diocese.split(' ')[2:]).upper()
+    paroisse = participant.paroisse.split(' ').pop()
+
     person_contacter_name = (participant.person_contacter_name[:20] + '.') if len(participant.person_contacter_name) > 20 else participant.person_contacter_name
-    context = {'qrcode': img_str, 'part': participant, 'name': name, 'diocese': diocese, 'person_contacter_name': person_contacter_name}
-    template = get_template(template_path)
+    context = {
+        'qrcode': img_str, 
+        'part': participant, 
+        'name': name, 
+        'diocese': diocese, 
+        'paroisse': paroisse,
+        'person_contacter_name': person_contacter_name
+    }
+    template_name = 'accompagnateur.html' if participant.encadreur else 'pelerin.html'
+    template = get_template(template_name)
     html = template.render(context)
 
     # fichier pdf
@@ -161,7 +172,7 @@ def inscrits(request):
 def inscrit(request, id: int):
     part = Participant.objects.get(pk=id)
     # make qrcode
-    qr = qrcode.QRCode()
+    qr = qrcode.QRCode(border=0)
     qr.add_data(part.code)
     qr.make(fit=True)
     img = qr.make_image(fill='black', back_color='white')
@@ -174,7 +185,7 @@ def inscrit(request, id: int):
     alerte = request.session.get('alerte', None)
     if alerte :
         del request.session['alerte']
-
+    
     return render(request, 'contacts/inscrit.html', context={
         'person': part, 
         'alerte': alerte,
