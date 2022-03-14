@@ -17,7 +17,8 @@ from dortoires.models import Dortoire
 # Create your views here.
 
 def index(request):
-    return render(request, 'contacts/index.html', context={'dioceses': DIOCESES})
+
+    return render(request, 'contacts/index.html', context={'dioceses': DIOCESES, 'ages': range(16,46)})
 
 def add_contact(request):
     
@@ -32,13 +33,14 @@ def add_contact(request):
             paroisse = request.POST.get('paroisse'),
             code = request.POST.get('code'),
             allergies = request.POST.get('allergies'),
+            cni = request.POST.get('cni', None),
+            age = int(request.POST.get('age')),
+            polo = request.POST.get('polo'),
+            type = request.POST.get('type'),
             groupe_sanguin = request.POST.get('groupe_sanguin'),
             maladies = request.POST.get('maladies')
         )
     
-    if request.POST.get('id', None):
-        participant.pk = int(request.POST.get('id'))
-
     # code encadreur
     if request.POST.get('encadreur', None):
         code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'))
@@ -47,27 +49,65 @@ def add_contact(request):
             participant.encadreur = code.code
             code.save()
     
-    if not participant.dortoir:
-        participant.dortoir = select_dortoir()
-        # update occupation
-        participant.dortoir.occupation +=1
-        participant.dortoir.save()
+    participant.dortoir = select_dortoir()
+    # update occupation du dortoir
+    participant.dortoir.occupation +=1
+    participant.dortoir.save()
 
+    # enregistrement du participant pour avoir l'id et produir le code
     participant.save()
 
     # code participant
-    code = code_generator(participant.diocese, participant.pk)
-    if not participant.code == code :
-        participant.code = code
-        participant.save()
+    participant.code = code_generator(participant.diocese, participant.pk)
+    participant.save()
     
     # production du badge
-    if not participant.produit :
-        render_pdf_view(participant)
+    render_pdf_view(participant)
 
     request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
     return redirect(f'inscrits/{participant.pk}')
 
+
+def modifier_participant(request):
+
+    if not request.POST.get('id', None):
+        request.session['alerte'] = {'success': False, 'message': 'Participant invalide'}
+        return redirect(f'inscrits')
+
+    part = Participant.objects.get(pk=int(request.POST.get('id')))
+
+    if part.produit :
+        request.session['alerte'] = {'success': False, 'message': 'Le badge de ce participant a déjà été produit. Ses informations ne peuvent plus être modifiées.'}
+        return redirect(f'inscrits/{part.pk}')
+
+    part.first_name = request.POST.get('first_name').title()
+    part.last_name = request.POST.get('last_name').upper()
+    part.phone_number = request.POST.get('phone_number')
+    part.diocese = request.POST.get('diocese')
+    part.sexe = request.POST.get('sexe')
+    part.person_contacter_name = request.POST.get('person_contacter_name')
+    part.person_contacter_phone = request.POST.get('person_contacter_phone')
+    part.paroisse = request.POST.get('paroisse')
+    part.allergies = request.POST.get('allergies')
+    part.cni = request.POST.get('cni', None)
+    part.age = int(request.POST.get('age'))
+    part.polo = request.POST.get('polo')
+    part.type = request.POST.get('type')
+    part.groupe_sanguin = request.POST.get('groupe_sanguin')
+    part.maladies = request.POST.get('maladies')
+
+    # code encadreur
+    if request.POST.get('encadreur', None) and not part.encadreur :
+        code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'))
+        if code and code.active == False : 
+            part.encadreur = code.code
+            code.active = True
+            code.save()
+    
+    part.save()
+    render_pdf_view(part)
+
+    return redirect(f'inscrits/{part.pk}')
 
 def code_generator(diocese: str, id: int): 
     return f'{diocese.split(" ").pop()[:4].upper()}-2022-JNJ-{"0000"[:4-len(str(id))]}{id}'
@@ -79,10 +119,10 @@ def select_dortoir():
     else:
         return dortoirs[0]
 
-def render_pdf_view(participant: Participant):
+def render_pdf_view(part: Participant):
     # make qrcode
     qr = qrcode.QRCode(border=0)
-    qr.add_data(participant.code)
+    qr.add_data(part.code + (('-' + part.encadreur) if part.encadreur else ''))
     qr.make(fit=True)
     img = qr.make_image(fill='black', back_color='white')
     buffer = io.BytesIO()
@@ -91,28 +131,28 @@ def render_pdf_view(participant: Participant):
 
     # html template
     
-    name = participant.last_name.split(' ')[0] + ' ' + participant.first_name.split(' ')[0]
+    name = part.last_name.split(' ')[0] + ' ' + part.first_name.split(' ')[0]
     name = (name[:15] + '.') if len(name) > 15 else name
 
-    diocese = ' '.join(participant.diocese.split(' ')[2:]).upper()
-    paroisse = participant.paroisse.split(' ').pop()
+    diocese = ' '.join(part.diocese.split(' ')[2:]).upper()
+    paroisse = part.paroisse.split(' ').pop()
 
-    person_contacter_name = (participant.person_contacter_name[:20] + '.') if len(participant.person_contacter_name) > 20 else participant.person_contacter_name
+    person_contacter_name = (part.person_contacter_name[:20] + '.') if len(part.person_contacter_name) > 20 else part.person_contacter_name
     context = {
         'qrcode': img_str, 
-        'part': participant, 
+        'part': part, 
         'name': name, 
         'diocese': diocese, 
         'paroisse': paroisse,
         'person_contacter_name': person_contacter_name
     }
-    template_name = 'accompagnateur.html' if participant.encadreur else 'pelerin.html'
+    template_name = 'accompagnateur.html' if part.encadreur else 'pelerin.html'
     template = get_template(template_name)
     html = template.render(context)
 
     # fichier pdf
     STATIC_DIR = Path(__file__).resolve().parent / 'static' / 'badges'
-    output_filename = STATIC_DIR / f'{participant.pk}.pdf'
+    output_filename = STATIC_DIR / f'{part.pk}.pdf'
     result_file = open(output_filename, "w+b")
 
     # create a pdf
@@ -173,7 +213,7 @@ def inscrit(request, id: int):
     part = Participant.objects.get(pk=id)
     # make qrcode
     qr = qrcode.QRCode(border=0)
-    qr.add_data(part.code)
+    qr.add_data(part.code + (('-' + part.encadreur) if part.encadreur else ''))
     qr.make(fit=True)
     img = qr.make_image(fill='black', back_color='white')
 
@@ -189,6 +229,7 @@ def inscrit(request, id: int):
     return render(request, 'contacts/inscrit.html', context={
         'person': part, 
         'alerte': alerte,
+        'ages': range(15,46),
         'dioceses': DIOCESES, 
         'createdat': part.createat.strftime("%d/%m/%Y %H:%M"),
         'qrcode': img_str

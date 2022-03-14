@@ -122,39 +122,90 @@
 
         <div class="mb-3">
           <label for="last_name" class="form-label">Nom / Last name *</label>
-          <input type="text" name="last_name" required="required" class="form-control" id="last_name">
+          <input type="text" autocomplete="off" name="last_name" required="required" class="form-control" id="last_name">
         </div>
 
         <div class="mb-3">
           <label for="phone_number" class="form-label">Numéro de téléphone / Phone number *</label>
-          <input type="text" name="phone_number" required="required" class="form-control" id="phone_number">
+          <input type="text" autocomplete="off" name="phone_number" required="required" class="form-control" id="phone_number">
         </div>
 
         <div class="mb-3">
-          <label for="paroisse" class="form-label">Paroisse / Parish *</label>
-          <input type="text" name="paroisse" required="required" class="form-control" id="paroisse">
+          <label for="cni" class="form-label">Numéro CNI / NIC number </label>
+          <input type="text" minlength="9" autocomplete="off" name="cni" class="form-control" id="cni">
         </div>
 
-        <div class="mb-3">
-          <label for="diocese" class="form-label">Diocèse / Diocese *</label>
-          <select class="form-select" name="diocese" required="required" id="diocese">
-            <option selected></option>
-            {% for diocese in dioceses %}
-            <option value="{{diocese}}">{{diocese}}</option>
-            {% endfor %}
-          </select>
+        <div class="row mb-3">
+          <div class="col col-12 col-sm-4">
+            <div class="mb-3">
+              <label for="diocese" class="form-label">Diocèse / Diocese *</label>
+              <select class="form-select" name="diocese" required="required" id="diocese">
+                <option selected></option>
+                {% for diocese in dioceses %}
+                <option value="{{diocese}}">{{diocese}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col col-12 col-sm-4">
+            <div class="mb-3">
+              <label for="paroisse" class="form-label">Paroisse / Parish *</label>
+              <input type="text" name="paroisse" required="required" class="form-control" id="paroisse">
+            </div>
+          </div>
+          <div class="col col-12 col-sm-4">
+            <div class="mb-3">
+              <label for="type" class="form-label">Type *</label>
+              <select class="form-select" name="type" required="required" id="type">
+                <option selected value="Laïc">Laïc</option>
+                <option value="Prêtre">Prêtre</option>
+                <option value="Religieux">Religieux</option>
+                <option value="Frère">Frère</option>
+                <option value="Diacre">Diacre</option>
+                <option value="Séminariste">Séminariste</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <div class="form-check">
-          <label class="form-check-label" for="femme">Femme / Female </label>
-          <input class="form-check-input" type="radio" name="sexe" value="F" id="femme" checked>
-        </div>
+        <div class="row mb-3">
+          <div class="col col-12 col-sm-4">
+            <div class="form-check">
+              <label class="form-check-label" for="femme">Femme / Female </label>
+              <input class="form-check-input" type="radio" name="sexe" value="F" id="femme" checked>
+            </div>
 
-        <div class="form-check">
-          <label class="form-check-label" for="homme">Homme / Male</label>
-          <input class="form-check-input" type="radio" value="M" name="sexe" id="homme">
+            <div class="form-check">
+              <label class="form-check-label" for="homme">Homme / Male</label>
+              <input class="form-check-input" type="radio" value="M" name="sexe" id="homme">
+            </div>
+          </div>
+          <div class="col col-12 col-sm-4">
+            <div class="mb-3">
+              <label for="age" class="form-label">Âge / Age *</label>
+              <select class="form-select" autocomplete="off" name="age" required="required" id="age">
+                <option selected value="15">15</option>
+                {% for age in ages %}
+                <option value="{{age}}">{{age}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col col-12 col-sm-4">
+            <div class="mb-3">
+              <label for="polo" class="form-label">Taille du polo / Size of the polo *</label>
+              <select class="form-select" name="polo" required="required" id="polo">
+                <option selected value="L">L</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+                <option value="XXXL">XXXL</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <br>
 
         <div class="card">
           <div class="card-body">
@@ -163,11 +214,11 @@
             <div class="row">
               <div class="col col-12 col-sm-4">
                 <label for="allergies" class="form-label">Allergies / Allergies</label>
-                <input type="text" name="allergies" class="form-control" id="allergies">
+                <input type="text" autocomplete="off" name="allergies" class="form-control" id="allergies">
               </div>
               <div class="col col-12 col-sm-3">
                 <label for="groupe_sanguin" class="form-label">Groupe sanguin / Blood group </label>
-                <select class="form-select" name="groupe_sanguin" id="groupe_sanguin">
+                <select class="form-select" autocomplete="off" name="groupe_sanguin" id="groupe_sanguin">
                   <option selected></option>
                   <option value="A-">A-</option>
                   <option value="A+">A+</option>
@@ -181,7 +232,7 @@
               </div>
               <div class="col col-12 col-sm-5">
                 <label for="maladies" class="form-label">Maladies / Diseases</label>
-                <textarea name="maladies" class="form-control" id="maladies" cols="30" rows="3"></textarea>
+                <textarea name="maladies" autocomplete="off" class="form-control" id="maladies" cols="30" rows="3"></textarea>
               </div>
             </div>
           </div>
@@ -194,21 +245,21 @@
 
             <div class="mb-3">
               <label for="person_contacter_name" class="form-label"> Nom complet / Full name *</label>
-              <input type="text" name="person_contacter_name" required="required" class="form-control"
+              <input type="text" autocomplete="off" name="person_contacter_name" required="required" class="form-control"
                 id="person_contacter_name">
             </div>
 
             <div class="mb-3">
               <label for="person_contacter_phone" class="form-label">Numéro de téléphone / Phone number *</label>
-              <input type="text" name="person_contacter_phone" required="required" class="form-control"
+              <input type="text" autocomplete="off" name="person_contacter_phone" required="required" class="form-control"
                 id="person_contacter_phone">
             </div>
           </div>
         </div>
 
         <div class="mb-3">
-          <label for="encadreur" class="form-label">Mon code encadreur</label>
-          <input type="text" name="encadreur" class="form-control" id="encadreur">
+          <label for="encadreur" class="form-label">Code accompagnateur / Companion code</label>
+          <input type="text" autocomplete="off" name="encadreur" class="form-control" id="encadreur">
         </div>
         <br>
 

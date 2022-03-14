@@ -16,13 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from contacts.views import index, add_contact, delete_contact, inscrits, inscrit, check_badge_produit
+from contacts.views import index, add_contact, modifier_participant, delete_contact, inscrits, inscrit, check_badge_produit
 from dortoires.views import sites, ajouter_site, supprimer_site, supprimer_dortoir
 from contacts.views_encadreurs import encadreurs, creer_code_encadreur, delete_code_encadreur
 
 urlpatterns = [
     path('', index, name='index'),
     path('add', add_contact, name='add-contact'),
+    path('update', modifier_participant, name='update-participant'),
     path('check-badge-produit', check_badge_produit, name='check-badge-produit'),
     path('inscrits/', inscrits, name='inscrits'),
     path('inscrits/<int:id>', inscrit, name='inscrit'),

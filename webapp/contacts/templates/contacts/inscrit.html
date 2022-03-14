@@ -46,7 +46,7 @@
       {% endif %}
       <div class="row">
         <div class="col">
-          <form class="card p-3 " action="{% url 'add-contact' %}" method="post">
+          <form class="card p-3 " action="{% url 'update-participant' %}" method="post">
 
             <h1 class="title p-3  text-center">Formulaire d'enregistrement <br> Registration form </h1>
 
@@ -58,14 +58,19 @@
 
             <div class="mb-3">
               <label for="last_name" class="form-label">Nom / Last name *</label>
-              <input type="text" name="last_name" required="required" value="{{person.last_name}}" class="form-control"
+              <input type="text" autocomplete="off" name="last_name" required="required" value="{{person.last_name}}" class="form-control"
                 id="last_name">
             </div>
 
             <div class="mb-3">
               <label for="phone_number" class="form-label">Numéro de téléphone / Phone number *</label>
-              <input type="text" name="phone_number" value="{{person.phone_number}}" required="required"
+              <input type="text" autocomplete="off" name="phone_number" value="{{person.phone_number}}" required="required"
                 class="form-control" id="phone_number">
+            </div>
+
+            <div class="mb-3">
+              <label for="cni" class="form-label">Numéro CNI / NIC number </label>
+              <input type="text" minlength="9" autocomplete="off" {% if person.cni %} value="{{person.cni}}" {% endif %} name="cni" class="form-control" id="cni">
             </div>
 
             <div class="mb-3">
@@ -83,6 +88,19 @@
               </select>
             </div>
 
+            <div class="mb-3">
+              <label for="type" class="form-label">Type *</label>
+              <select class="form-select" name="type" required="required" id="type">
+                <option value="Laïc" {% if 'Laïc' == person.type %} selected {% endif %}>Laïc</option>
+                <option value="Prêtre" {% if 'Prêtre' == person.type %} selected {% endif %}>Prêtre</option>
+                <option value="Religieux" {% if 'Religieux' == person.type %} selected {% endif %}>Religieux</option>
+                <option value="Frère" {% if 'Frère' == person.type %} selected {% endif %}>Frère</option>
+                <option value="Diacre" {% if 'Diacre' == person.type %} selected {% endif %}>Diacre</option>
+                <option value="Séminariste" {% if 'Séminariste' == person.type %} selected {% endif %}>Séminariste</option>
+                <option value="Autre" {% if 'Autre' == person.type %} selected {% endif %}>Autre</option>
+              </select>
+            </div>
+
             <div class="form-check">
               <label class="form-check-label" for="femme">Femme / Female </label>
               <input class="form-check-input" type="radio" {% if person.sexe == "F" %} checked {% endif %}
@@ -92,6 +110,27 @@
               <label class="form-check-label" for="homme">Homme / Male</label>
               <input class="form-check-input" type="radio" {% if person.sexe == "M" %} checked {% endif %}
                 value="M" name="sexe" id="homme">
+            </div>
+
+            <div class="mb-3">
+              <label for="age" class="form-label">Âge / Age *</label>
+              <select class="form-select" autocomplete="off" name="age" required="required" id="age">
+                {% for age in ages %}
+                <option value="{{age}}" {% if age == person.age %} selected {% endif %}>{{age}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="polo" class="form-label">Taille du polo / Size of the polo *</label>
+              <select class="form-select" name="polo" required="required" id="polo">
+                <option value="L" {% if 'L' == person.polo %} selected {% endif %}>L</option>
+                <option value="S" {% if 'S' == person.polo %} selected {% endif %}>S</option>
+                <option value="M" {% if 'M' == person.polo %} selected {% endif %}>M</option>
+                <option value="XL" {% if 'XL' == person.polo %} selected {% endif %}>XL</option>
+                <option value="XXL" {% if 'XXL' == person.polo %} selected {% endif %}>XXL</option>
+                <option value="XXXL" {% if 'XXXL' == person.polo %} selected {% endif %}>XXXL</option>
+              </select>
             </div>
 
             <div class="card">
@@ -119,7 +158,7 @@
                   </div>
                   <div class="col col-12 col-sm-12">
                     <label for="maladies" class="form-label">Maladies / Diseases</label>
-                    <textarea name="maladies" class="form-control" value="{{person.maladies}}" id="maladies" cols="30" rows="3"></textarea>
+                    <textarea name="maladies" class="form-control" id="maladies" cols="30" rows="3">{{person.maladies}}</textarea>
                   </div>
                 </div>
               </div>
@@ -144,14 +183,15 @@
             </div>
 
             <div class="mb-3">
-              <label for="encadreur" class="form-label">Mon code encadreur</label>
-              <input type="text" name="encadreur" {% if person.encadreur %} value="{{person.encadreur}}" {% endif %} class="form-control" id="encadreur">
+              <label for="encadreur" class="form-label">Code accompagnateur / Companion code</label>
+              <input type="text" autocomplete="off" name="encadreur" {% if person.encadreur %} value="{{person.encadreur}}" {% endif %} class="form-control" id="encadreur">
             </div>
             <br>
             <input type="hidden" name="id" value="{{person.id}}">
-            <input type="hidden" name="code" value="{{person.code}}">
             {% csrf_token %}
+            {% if not person.produit %}
             <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            {% endif %}
           </form>
         </div>
         <div class="col">
