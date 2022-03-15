@@ -110,6 +110,12 @@
     </div>
 
     <div class="container marketing">
+      {% if alerte %}
+        <div class="alert alert-dismissible {% if alerte.success %} alert-success {% else %} alert-danger  {% endif %}" role="alert">
+          {{alerte.message}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
       <form class="card p-5 " action="{% url 'add-contact' %}" method="post">
 
         <h1 class="title p-3  text-center">Formulaire d'enregistrement <br> Registration form </h1>

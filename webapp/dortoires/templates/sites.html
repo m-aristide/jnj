@@ -80,6 +80,17 @@
               required="required" class="form-control" id="designation">
           </div>
 
+          <div class="form-check">
+            <label class="form-check-label" for="femme">Femme</label>
+            <input class="form-check-input" type="radio" {% if site_edit and site_edit.sexe == "F" %} checked {% endif %}
+              name="sexe" value="F" id="femme" checked>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label" for="homme">Homme</label>
+            <input class="form-check-input" type="radio" {% if site_edit and site_edit.sexe == "M" %} checked {% endif %}
+              value="M" name="sexe" id="homme">
+          </div>
+
           <div class="mb-1">
             <label for="description" class="form-label">Informations supplémentaires</label>
             <textarea name="description" class="form-control" id="description" cols="30"
@@ -110,6 +121,7 @@
           <tr>
             <th>Sites</th>
             <th>Informations supplémentaires</th>
+            <th>Genre</th>
             <th>Dortoirs</th>
             <th></th>
           </tr>
@@ -119,6 +131,7 @@
           <tr>
             <td> {{site.designation}} </td>
             <td>{{site.description}}</td>
+            <td>{{site.sexe}}</td>
             <td>
               <table class="table">
                 <tbody>

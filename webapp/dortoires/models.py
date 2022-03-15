@@ -5,13 +5,13 @@ from django.db import models
 class Site(models.Model):
     designation = models.CharField(max_length=255)
     description = models.TextField()
+    sexe = models.CharField(max_length=5, default='M')
 
     def __repr__(self):
-        return f"Site({self.pk}, {self.designation}, {self.description})"
+        return f"Site({self.pk}, {self.designation}, {self.description}, {self.sexe})"
 
     def __str__(self):
-        return f"Site({self.pk}, {self.designation}, {self.description})"
-
+        return f"Site({self.pk}, {self.designation}, {self.description}, {self.sexe})"
 
     
 class Dortoire(models.Model):

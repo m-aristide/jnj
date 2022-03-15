@@ -27,7 +27,8 @@ def ajouter_site(request) :
     site = Site(
         pk = (request.POST.get('id') if request.POST.get('id') != '' else None),
         designation = request.POST.get('designation'),
-        description = request.POST.get('description')
+        description = request.POST.get('description'),
+        sexe = request.POST.get('sexe')
     )
 
     # enregistrement du site

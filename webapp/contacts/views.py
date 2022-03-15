@@ -17,8 +17,11 @@ from dortoires.models import Dortoire
 # Create your views here.
 
 def index(request):
-
-    return render(request, 'contacts/index.html', context={'dioceses': DIOCESES, 'ages': range(16,46)})
+    # gestion alerte
+    alerte = request.session.get('alerte', None)
+    if alerte :
+        del request.session['alerte']
+    return render(request, 'contacts/index.html', context={'dioceses': DIOCESES, 'alerte': alerte, 'ages': range(16,46)})
 
 def add_contact(request):
     
@@ -41,6 +44,16 @@ def add_contact(request):
             maladies = request.POST.get('maladies')
         )
     
+    
+    participant.dortoir = select_dortoir(participant.sexe)
+    # update occupation du dortoir
+    if not participant.dortoir :
+        request.session['alerte'] = {'success': False, 'message': 'Enregistrement impossible : Tous les dortoirs sont occupés !'}
+        return redirect('index')
+    
+    participant.dortoir.occupation +=1
+    participant.dortoir.save()
+
     # code encadreur
     if request.POST.get('encadreur', None):
         code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'))
@@ -48,11 +61,6 @@ def add_contact(request):
             code.active = True
             participant.encadreur = code.code
             code.save()
-    
-    participant.dortoir = select_dortoir()
-    # update occupation du dortoir
-    participant.dortoir.occupation +=1
-    participant.dortoir.save()
 
     # enregistrement du participant pour avoir l'id et produir le code
     participant.save()
@@ -69,7 +77,6 @@ def add_contact(request):
 
 
 def modifier_participant(request):
-
     if not request.POST.get('id', None):
         request.session['alerte'] = {'success': False, 'message': 'Participant invalide'}
         return redirect(f'inscrits')
@@ -112,12 +119,16 @@ def modifier_participant(request):
 def code_generator(diocese: str, id: int): 
     return f'{diocese.split(" ").pop()[:4].upper()}-2022-JNJ-{"0000"[:4-len(str(id))]}{id}'
 
-def select_dortoir():
+def select_dortoir(sexe):
     dortoirs = [dortoir for dortoir in Dortoire.objects.all() if dortoir.occupation < dortoir.capacite ]
-    if len(dortoirs) < 0 :
+    if len(dortoirs) == 0 :
         return None
     else:
-        return dortoirs[0]
+        dortoirs = [dortoir for dortoir in dortoirs if dortoir.site.sexe == sexe]
+        if len(dortoirs) == 0 :
+            return None
+        else:
+            dortoirs[0]
 
 def render_pdf_view(part: Participant):
     # make qrcode
