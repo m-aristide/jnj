@@ -14,7 +14,7 @@ COPY requirements.txt ./
 
 #install mysql
 RUN apt update
-RUN apt-get install python3-dev default-libmysqlclient-dev build-essential
+RUN apt-get install -y python3-dev default-libmysqlclient-dev build-essential
 
 # Get pip to download and install requirements:
 RUN pip install --no-cache-dir -r requirements.txt

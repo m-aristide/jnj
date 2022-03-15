@@ -191,6 +191,8 @@
             {% csrf_token %}
             {% if not person.produit %}
             <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            {% else %}
+            <p class="text-danger">Le badge de ce participant a déjà été produit. Ses informations ne peuvent plus être modifiées.</p>
             {% endif %}
           </form>
         </div>
