@@ -91,7 +91,6 @@ def modifier_participant(request):
     part.last_name = request.POST.get('last_name').upper()
     part.phone_number = request.POST.get('phone_number')
     part.diocese = request.POST.get('diocese')
-    part.sexe = request.POST.get('sexe')
     part.person_contacter_name = request.POST.get('person_contacter_name')
     part.person_contacter_phone = request.POST.get('person_contacter_phone')
     part.paroisse = request.POST.get('paroisse')
@@ -102,6 +101,20 @@ def modifier_participant(request):
     part.type = request.POST.get('type')
     part.groupe_sanguin = request.POST.get('groupe_sanguin')
     part.maladies = request.POST.get('maladies')
+
+
+    # update occupation du dortoir
+    if part.sexe != request.POST.get('sexe') :
+        part.sexe = request.POST.get('sexe')
+        dortoir = select_dortoir(part.sexe)
+        if not dortoir :
+            request.session['alerte'] = {'success': False, 'message': f'Enregistrement impossible : Tous les dortoirs {part.sexe} sont occupés  !'}
+            return redirect(f'inscrits/{part.pk}')
+        part.dortoir.occupation -=1
+        part.dortoir.save()
+        dortoir.occupation +=1
+        dortoir.save()
+        part.dortoir = dortoir
 
     # code encadreur
     if request.POST.get('encadreur', None) and not part.encadreur :
@@ -128,7 +141,7 @@ def select_dortoir(sexe):
         if len(dortoirs) == 0 :
             return None
         else:
-            dortoirs[0]
+            return dortoirs[0]
 
 def render_pdf_view(part: Participant):
     # make qrcode
