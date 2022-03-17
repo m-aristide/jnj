@@ -95,8 +95,8 @@
           </div>
           <div class="col col-12 col-sm-12 col-md-3">
             <div class="mb-3">
-              <label for="formFile" class="form-label">Photo </label>
-              <input class="form-control" type="file" id="formFile">
+              <label for="formFile" class="form-label">Photo (< 2Mo) </label>
+              <input class="form-control" maxlength="800000" type="file" id="formFile">
               <input type="hidden" name="resizephoto" id="resizephoto">
               <div id="result"></div>
               <button type="button" class="btn btn-danger" style="display: none;"  id="button">Rogner / Crop</button>

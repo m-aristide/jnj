@@ -300,5 +300,7 @@ def delete_photo(request) :
     part = Participant.objects.get(pk=int(request.POST.get('id')))
     part.photo = None
     part.save()
+    # production du badge
+    render_pdf_view(part)
     request.session['alerte'] = {'success': True, 'message': 'Photo supprimée !'}
     return redirect(f'inscrits/{part.pk}')
