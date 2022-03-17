@@ -61,6 +61,10 @@
             -pdf-frame-content: polo;
             left: 42pt; top: 351pt; width: 24pt;
         }
+        @frame photo { /* Another static Frame */
+            -pdf-frame-content: photo;
+            left: 98pt; top: 103pt; width: 101pt;
+        }
     }
     #name {
         color: #000;font-size: 1.8rem;line-height: 12px;font-weight: bold;background-color: #fff;
@@ -69,7 +73,7 @@
         color: #000;font-size: 1.8rem;background-color: #fff;line-height: 12px;font-weight: bold;text-align: right;
     }
     #paroisse {
-        color: #000;font-size: 1.7rem;background-color: #fff;line-height: 12px;font-weight: bold;text-align: right;
+        color: #000;font-size: 1rem;background-color: #fff;line-height: 12px;font-weight: bold;text-align: right;
     }
     #qrcode {
         background-color: #fff;
@@ -128,7 +132,7 @@
     </div>
 
     <div id="paroisse">
-        {{paroisse}}
+        {{part.paroisse}}
     </div>
 
     <div id="diocese">
@@ -163,6 +167,12 @@
         {{part.dortoir.site.designation}} <br>
         {{part.dortoir.code}}
     </div>
+
+    {% if part.photo %}
+    <div id="photo">
+        <img src="{{ part.photo | safe }}">
+    </div>
+    {% endif %}
 
     <!-- Content for Static Frame 'background_image' -->
     <div id="background_image">

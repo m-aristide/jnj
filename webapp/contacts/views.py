@@ -187,15 +187,13 @@ def render_pdf_view(part: Participant):
     name = (name[:15] + '.') if len(name) > 15 else name
 
     diocese = ' '.join(part.diocese.split(' ')[2:]).upper()
-    paroisse = part.paroisse.split(' ').pop()
 
     person_contacter_name = (part.person_contacter_name[:20] + '.') if len(part.person_contacter_name) > 20 else part.person_contacter_name
     context = {
         'qrcode': img_str, 
         'part': part, 
         'name': name, 
-        'diocese': diocese, 
-        'paroisse': paroisse,
+        'diocese': diocese,
         'person_contacter_name': person_contacter_name
     }
     template_name = 'accompagnateur.html' if part.encadreur else 'pelerin.html'
