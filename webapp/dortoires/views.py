@@ -1,8 +1,10 @@
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 
 from dortoires.models import Site, Dortoire
 
 # Create your views here.
+@login_required(login_url='connexion')
 def sites(request, id = None):
     sites = Site.objects.all()
 
@@ -21,7 +23,7 @@ def sites(request, id = None):
 
     return render(request, 'sites.html', context={'sites': sites, 'alerte': alerte, 'site_edit': site_edit})
 
-
+@login_required(login_url='connexion')
 def ajouter_site(request) :
     
     site = Site(
@@ -73,6 +75,7 @@ def ajouter_site(request) :
     request.session['alerte'] = {'success': True, 'message': 'Site créé'}
     return redirect('sites')
 
+@login_required(login_url='connexion')
 def supprimer_site(request):
     id = int(request.POST.get('id'))
     dortoirs = Dortoire.objects.filter(site__pk = id, occupation__gte = 0)
@@ -85,6 +88,7 @@ def supprimer_site(request):
         request.session['alerte'] = {'success': True, 'message': 'Site supprimé'}
         return redirect('sites')
 
+@login_required(login_url='connexion')
 def supprimer_dortoir(request):
     id = int(request.POST.get('id'))
     dortoir = Dortoire.objects.get(pk = id)

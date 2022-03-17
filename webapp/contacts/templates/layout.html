@@ -1,0 +1,73 @@
+{% load static %}
+{% load active_link_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSS only -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block css %}{% endblock %}
+
+  <title>{% block title %}INSCRIPTION AUX JNJ EBOLOWA 2022{% endblock %}</title>
+</head>
+
+<body class="{% block body-bg %}no-bg{% endblock %}">
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">JNJ EBOLOWA 2022</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <ul class="nav nav-pills">
+          {% if user.is_authenticated %}
+            <li class="nav-item"><a href="{% url 'encadreurs' %}" class="nav-link {% active_link 'encadreurs' %}">Accompagnateurs</a></li>
+            <li class="nav-item"><a href="{% url 'sites' %}" class="nav-link {% active_link 'sites' %}">Sites</a></li>
+            <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link {% active_link 'inscrits' %}">Inscrits</a></li>
+        
+            <button class="btn">{{ user.get_username }}</button>
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Déconnexion</button>
+            </form>
+          {% else %}
+              <div class="col-md-3 text-end">
+                <a href="{% url 'connexion' %}" type="button" class="btn btn-secondary text-white me-2">Connexion</a>
+              </div>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <!-- FOOTER -->
+  <footer class="d-flex flex-wrap justify-content-between align-items-center border-top">
+    <div class="col text-danger fw-bold">
+      Contacts Aumônerie : 694 23 41 65 / 656 71 69 97 / 696 18 80 08
+    </div>
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+        <svg class="bi" width="30" height="24">
+          <use xlink:href="#bootstrap" />
+        </svg>
+      </a>
+      <span class="text-muted">&copy; 2022 developed by m-aristide - 690784116</span>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  {% block scrit %}{% endblock %}
+
+</body>
+</html>

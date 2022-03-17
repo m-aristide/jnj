@@ -27,3 +27,5 @@ DIOCESES = [
     'Diocèse de Yaoundé',
     'Diocèse de Yokadouma'
 ]
+
+GROUPES_SANGUINS = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']

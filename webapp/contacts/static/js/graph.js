@@ -1,10 +1,10 @@
 
-(function codeAddress() {
+window.addEventListener('DOMContentLoaded', function codeAddress() {
     mainChart();
     chartByDiocese();
     chartOfDiocese();
     actions();
-})()
+})
 
 $(document).ready(function () {
     $('#participants').DataTable({

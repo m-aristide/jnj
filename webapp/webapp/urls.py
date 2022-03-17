@@ -16,11 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from contacts.views import index, add_contact, modifier_participant, delete_contact, inscrits, inscrit, check_badge_produit
+from contacts.user import logout, connexion, login
+from contacts.views import index, add_contact, modifier_participant, delete_contact, inscrits, inscrit, check_badge_produit, delete_photo
 from dortoires.views import sites, ajouter_site, supprimer_site, supprimer_dortoir
 from contacts.views_encadreurs import encadreurs, creer_code_encadreur, delete_code_encadreur
 
 urlpatterns = [
+    path('logout', logout, name='logout'),
+    path('connexion', connexion, name='connexion'),
+    path('login', login, name='login'),
+
     path('', index, name='index'),
     path('add', add_contact, name='add-contact'),
     path('update', modifier_participant, name='update-participant'),
@@ -28,6 +33,7 @@ urlpatterns = [
     path('inscrits/', inscrits, name='inscrits'),
     path('inscrits/<int:id>', inscrit, name='inscrit'),
     path('delete/<int:id>', delete_contact, name='delete-contact'),
+    path('delete-photo', delete_photo, name='remove-photo'),
 
     # encadreurs
     path('encadreurs', encadreurs, name='encadreurs'),

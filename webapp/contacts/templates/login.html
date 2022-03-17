@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block css %}
+<style>
+    .form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+  }
+  
+  .form-signin .checkbox {
+    font-weight: 400;
+  }
+  
+  .form-signin .form-floating:focus-within {
+    z-index: 2;
+  }
+  
+  .form-signin input[type="text"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  
+  .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<main class="form-signin no-bg">
+    <form action="{% url 'login' %}" method="post" style="margin: 7rem 0;">
+      <h1 class="h3 mb-5 fw-normal">Connexion</h1>
+  
+      {% if alerte %}
+        <div class="alert alert-dismissible alert-danger" role="alert">
+          Nom d'utilisateur ou mot de passe invalide
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+
+      <div class="form-floating mb-5">
+        <input type="text" class="form-control" name="username" id="floatingInput" placeholder="Nom d'utilisateur / Username">
+        <label for="floatingInput">Nom d'utilisateur / Username</label>
+      </div>
+      <div class="form-floating mb-5">
+        <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Mot de passe / Password">
+        <label for="floatingPassword">Mot de passe / Password</label>
+      </div>
+      {% csrf_token %}
+      <button class="w-100 btn btn-lg btn-primary mb-5" type="submit">Connexion</button>
+    </form>
+  </main>
+{% endblock %}

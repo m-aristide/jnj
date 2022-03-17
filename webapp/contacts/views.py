@@ -1,17 +1,16 @@
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.template.loader import get_template
 from pathlib import Path
 import io
 import base64
 
-from django.urls import reverse
-
 from xhtml2pdf import pisa
 import qrcode 
 
 from contacts.models import Participant, CodeEncadreur
-from contacts.diocese import DIOCESES
+from contacts.constants import DIOCESES, GROUPES_SANGUINS
 from dortoires.models import Dortoire
 
 # Create your views here.
@@ -21,7 +20,14 @@ def index(request):
     alerte = request.session.get('alerte', None)
     if alerte :
         del request.session['alerte']
-    return render(request, 'contacts/index.html', context={'dioceses': DIOCESES, 'alerte': alerte, 'ages': range(16,46)})
+    context={
+        'dioceses': DIOCESES, 
+        'alerte': alerte, 
+        'ages': range(16,46),
+        'groupes_sangs': GROUPES_SANGUINS
+    }
+
+    return render(request, 'contacts/index.html', context=context)
 
 def add_contact(request):
     
@@ -40,10 +46,10 @@ def add_contact(request):
             age = int(request.POST.get('age')),
             polo = request.POST.get('polo'),
             type = request.POST.get('type'),
+            photo = request.POST.get('resizephoto'),
             groupe_sanguin = request.POST.get('groupe_sanguin'),
             maladies = request.POST.get('maladies')
         )
-    
     
     participant.dortoir = select_dortoir(participant.sexe)
     # update occupation du dortoir
@@ -51,16 +57,25 @@ def add_contact(request):
         request.session['alerte'] = {'success': False, 'message': 'Enregistrement impossible : Tous les dortoirs sont occupés !'}
         return redirect('index')
     
-    participant.dortoir.occupation +=1
-    participant.dortoir.save()
 
     # code encadreur
-    if request.POST.get('encadreur', None):
-        code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'))
-        if code and code.active == False : 
-            code.active = True
-            participant.encadreur = code.code
-            code.save()
+    code = None
+    if request.POST.get('encadreur', None)  :
+        try:
+            code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'), active = False)
+        except CodeEncadreur.DoesNotExist:
+            request.session['alerte'] = {'success': False, 'message': f'Code accompagnateur invalide !'}
+            return redirect('index')
+
+    # enregistrement code
+    if code : 
+        participant.encadreur = code.code
+        code.active = True
+        code.save()
+    
+    # enregistrement dortoir
+    participant.dortoir.occupation +=1
+    participant.dortoir.save()
 
     # enregistrement du participant pour avoir l'id et produir le code
     participant.save()
@@ -74,7 +89,6 @@ def add_contact(request):
 
     request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
     return redirect(f'inscrits/{participant.pk}')
-
 
 def modifier_participant(request):
     if not request.POST.get('id', None):
@@ -102,28 +116,42 @@ def modifier_participant(request):
     part.groupe_sanguin = request.POST.get('groupe_sanguin')
     part.maladies = request.POST.get('maladies')
 
+    if request.POST.get('resizephoto', None) : 
+        part.photo = request.POST.get('resizephoto')
 
     # update occupation du dortoir
+    dortoir = None
     if part.sexe != request.POST.get('sexe') :
-        part.sexe = request.POST.get('sexe')
-        dortoir = select_dortoir(part.sexe)
+        dortoir = select_dortoir(request.POST.get('sexe'))
         if not dortoir :
             request.session['alerte'] = {'success': False, 'message': f'Enregistrement impossible : Tous les dortoirs {part.sexe} sont occupés  !'}
             return redirect(f'inscrits/{part.pk}')
+
+    # code encadreur
+    code = None
+    if request.POST.get('encadreur', None) and not part.encadreur :
+        try:
+            code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'), active = False)
+        except CodeEncadreur.DoesNotExist:
+            request.session['alerte'] = {'success': False, 'message': f'Code accompagnateur invalide !'}
+            return redirect(f'inscrits/{part.pk}')
+    
+    # enregistrement code accompagnateur
+    if code : 
+        part.encadreur = code.code
+        code.active = True
+        code.save()
+    
+    # enregistrement changement dortoir
+    if dortoir :
+        part.sexe = request.POST.get('sexe')
         part.dortoir.occupation -=1
         part.dortoir.save()
         dortoir.occupation +=1
         dortoir.save()
         part.dortoir = dortoir
 
-    # code encadreur
-    if request.POST.get('encadreur', None) and not part.encadreur :
-        code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'))
-        if code and code.active == False : 
-            part.encadreur = code.code
-            code.active = True
-            code.save()
-    
+
     part.save()
     render_pdf_view(part)
 
@@ -182,11 +210,13 @@ def render_pdf_view(part: Participant):
     # create a pdf
     pisa.CreatePDF(html, dest=result_file)
 
+@login_required(login_url='connexion')
 def delete_contact(request, id:int):
     part = Participant.objects.get(pk=id)
     part.delete()
     return redirect('index')
 
+@login_required(login_url='connexion')
 def inscrits(request):
     diocese = request.GET.get('diocese', 'Diocèse de Yaoundé')
     person_of_diocese = request.GET.get('person_of_diocese', None)
@@ -256,15 +286,21 @@ def inscrit(request, id: int):
         'ages': range(15,46),
         'dioceses': DIOCESES, 
         'createdat': part.createat.strftime("%d/%m/%Y %H:%M"),
-        'qrcode': img_str
+        'qrcode': img_str,
+        'groupes_sangs': GROUPES_SANGUINS
         })
 
+@login_required(login_url='connexion')
 def check_badge_produit(request) :
-
     part = Participant.objects.get(pk=int(request.POST.get('id')))
     part.produit = True
     part.save()
     request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
     return redirect(f'inscrits/{part.pk}')
 
-
+def delete_photo(request) :
+    part = Participant.objects.get(pk=int(request.POST.get('id')))
+    part.photo = None
+    part.save()
+    request.session['alerte'] = {'success': True, 'message': 'Photo supprimée !'}
+    return redirect(f'inscrits/{part.pk}')
