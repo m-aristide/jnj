@@ -49,34 +49,23 @@ def add_contact(request):
             photo = request.POST.get('resizephoto'),
             groupe_sanguin = request.POST.get('groupe_sanguin'),
             maladies = request.POST.get('maladies')
-        )
-    
-    participant.dortoir = select_dortoir(participant.sexe)
-    # update occupation du dortoir
-    if not participant.dortoir :
-        request.session['alerte'] = {'success': False, 'message': 'Enregistrement impossible : Tous les dortoirs sont occupés !'}
-        return redirect('index')
-    
+        )    
 
     # code encadreur
-    code = None
+    code_encadeur = None
     if request.POST.get('encadreur', None)  :
         try:
-            code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'), active = False)
+            code_encadeur = CodeEncadreur.objects.get(code = request.POST.get('encadreur'), active = False)
         except CodeEncadreur.DoesNotExist:
             request.session['alerte'] = {'success': False, 'message': f'Code accompagnateur invalide !'}
             return redirect('index')
 
     # enregistrement code
-    if code : 
-        participant.encadreur = code.code
-        code.active = True
-        code.save()
+    if code_encadeur : 
+        participant.encadreur = code_encadeur.code
+        code_encadeur.active = True
+        code_encadeur.save()
     
-    # enregistrement dortoir
-    participant.dortoir.occupation +=1
-    participant.dortoir.save()
-
     # enregistrement du participant pour avoir l'id et produir le code
     participant.save()
 
@@ -121,7 +110,7 @@ def modifier_participant(request):
 
     # update occupation du dortoir
     dortoir = None
-    if part.sexe != request.POST.get('sexe') :
+    if part.paye and part.sexe != request.POST.get('sexe') :
         dortoir = select_dortoir(request.POST.get('sexe'))
         if not dortoir :
             request.session['alerte'] = {'success': False, 'message': f'Enregistrement impossible : Tous les dortoirs {part.sexe} sont occupés  !'}
@@ -143,6 +132,7 @@ def modifier_participant(request):
         code.save()
     
     # enregistrement changement dortoir
+    
     if dortoir :
         part.sexe = request.POST.get('sexe')
         part.dortoir.occupation -=1
@@ -159,17 +149,6 @@ def modifier_participant(request):
 
 def code_generator(diocese: str, id: int): 
     return f'{diocese.split(" ").pop()[:4].upper()}-2022-JNJ-{"0000"[:4-len(str(id))]}{id}'
-
-def select_dortoir(sexe):
-    dortoirs = [dortoir for dortoir in Dortoire.objects.all() if dortoir.occupation < dortoir.capacite ]
-    if len(dortoirs) == 0 :
-        return None
-    else:
-        dortoirs = [dortoir for dortoir in dortoirs if dortoir.site.sexe == sexe]
-        if len(dortoirs) == 0 :
-            return None
-        else:
-            return dortoirs[0]
 
 def render_pdf_view(part: Participant):
     # make qrcode
@@ -211,8 +190,18 @@ def render_pdf_view(part: Participant):
 @login_required(login_url='connexion')
 def delete_contact(request, id:int):
     part = Participant.objects.get(pk=id)
+
+    # libération dortoir
+    if part.dortoir :
+        part.dortoir.occupation -=1
+        part.dortoir.save()
+
+    # suppression code accompgnateur
+    if part.encadreur : 
+        part.encadreur.delete()
+
     part.delete()
-    return redirect('index')
+    return redirect('inscrits')
 
 @login_required(login_url='connexion')
 def inscrits(request):
@@ -248,6 +237,9 @@ def inscrits(request):
     # nombre de carte produite
     produit = Participant.objects.filter(produit = True).annotate(total=Count('pk')).count()
 
+    # nombre de paiement reçu
+    paiements = Participant.objects.filter(paye__isnull = False).annotate(total=Count('pk')).count()
+
     return render(request, 'contacts/inscrits.html', context={
         'users': users,
         'main_chart_datas': main_chart_datas,
@@ -256,6 +248,7 @@ def inscrits(request):
         'chart_of_diocese_datas': chart_of_diocese_datas,
         'total_diocese': sum(chart_of_diocese_datas['datas']),
         'produit': produit,
+        'paiements': paiements,
         'dioceses': DIOCESES, 
         'selectdiocese': diocese,
         'person_of_diocese': person_of_diocese
@@ -304,3 +297,38 @@ def delete_photo(request) :
     render_pdf_view(part)
     request.session['alerte'] = {'success': True, 'message': 'Photo supprimée !'}
     return redirect(f'inscrits/{part.pk}')
+
+@login_required(login_url='connexion')
+def paiement_participant(request, id:int) :
+
+    part = Participant.objects.get(pk=id)
+
+    part.dortoir = select_dortoir(part.sexe)
+    # update occupation du dortoir
+    if not part.dortoir :
+        request.session['alerte'] = {'success': False, 'message': 'Enregistrement impossible : Tous les dortoirs sont occupés !'}
+        return redirect(f'inscrits/{part.pk}')
+
+    # enregistrement dortoir
+    part.dortoir.occupation +=1
+    part.dortoir.save()
+
+    # celui qui valide la réception d'argent
+    part.paye = request.user.username
+
+    part.save()
+    render_pdf_view(part)
+
+    request.session['alerte'] = {'success': True, 'message': 'Paiement enregistré !'}
+    return redirect(f'/inscrits/{part.pk}')
+
+def select_dortoir(sexe):
+    dortoirs = [dortoir for dortoir in Dortoire.objects.all() if dortoir.occupation < dortoir.capacite ]
+    if len(dortoirs) == 0 :
+        return None
+    else:
+        dortoirs = [dortoir for dortoir in dortoirs if dortoir.site.sexe == sexe]
+        if len(dortoirs) == 0 :
+            return None
+        else:
+            return dortoirs[0]

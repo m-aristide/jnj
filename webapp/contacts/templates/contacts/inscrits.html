@@ -5,11 +5,11 @@
 {% endblock %}
 {% block content %}
   <div class="container mt-5">
-    <div class="row">
-      <div class="col p-0">
+    <div class="row mt-5">
+      <div class="col mt-5 p-0">
         <div class="card">
           <div class="card-body">
-            <h3 class="card-title">Inscriptions ({{total}}) / Badges produits ({{produit}})</h3>
+            <h3 class="card-title">Inscriptions ({{total}}) / Badges produits ({{produit}}) / Paiements reçus ({{paiements}})</h3>
             <div class="row">
               <canvas id="main-chart" height="200"></canvas>
             </div>
@@ -56,9 +56,9 @@
     <hr>
     <br>
     <div class="row justify-content-end">
-      <div class="col-8 col-sm-4">
+      <div class="col-12 col-md-4 ">
         <select class="form-select" name="person_of_diocese" required="required" id="person-of-diocese">
-          <option selected>Tous les dioèces</option>
+          <option value="all" selected>Tous les dioèces</option>
           {% for diocese in dioceses %}
           <option value="{{diocese}}" {% if diocese == person_of_diocese %} selected {% endif %}>{{diocese}}</option>
           {% endfor %}
@@ -69,15 +69,16 @@
       <table class="table table-dark table-striped" id="participants">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Site / Dortoir</th>
-            <th scope="col">Nom</th>
-            <th scope="col">Prénom</th>
-            <th scope="col">Téléphone</th>
-            <th scope="col">Diocèse</th>
-            <th scope="col">Paroisse</th>
-            <th scope="col">Genre</th>
-            <th scope="col">Personne à contacter</th>
+            <th>#</th>
+            <th>Site / Dortoir</th>
+            <th>Noms & Prénoms</th>
+            <th>Téléphone</th>
+            <th>Diocèse</th>
+            <th>Paroisse</th>
+            <th>Genre</th>
+            <th>A contacter</th>
+            <th>Badge</th>
+            <th>Paiement</th>
             <th></th>
           </tr>
         </thead>
@@ -86,13 +87,14 @@
           <tr>
             <th scope="row">{{user.code}}</th>
             <th scope="row">{{user.dortoir.site.designation}} / {{user.dortoir.code}}</th>
-            <td>{{user.last_name}}</td>
-            <td>{{user.first_name}}</td>
+            <td>{{user.last_name}} {{user.first_name}}</td>
             <td>{{user.phone_number}}</td>
             <td>{{user.diocese}}</td>
             <td>{{user.paroisse}}</td>
             <td>{{user.sexe}}</td>
             <td>{{user.person_contacter_name}} - {{user.person_contacter_phone}}</td>
+            <td> {% if user.produit %} Imprimé {% else %} Non-produit {% endif %} </td>
+            <td> {% if user.paye %} Reçu {% else %} En attente {% endif %} </td>
             <td> <a class="btn btn-primary" href="{% url 'inscrit' id=user.id %}">Consulter</a></td>
           </tr>
           {% endfor %}

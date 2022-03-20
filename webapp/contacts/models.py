@@ -23,6 +23,7 @@ class Participant(models.Model):
     age = models.IntegerField(default=15)
     polo = models.CharField(max_length=5, default='L')
     photo = models.TextField(null=True)
+    paye = models.TextField(max_length=20, null=True)
     cni = models.CharField(max_length=20, null=True)
     dortoir = models.ForeignKey(Dortoire, on_delete=models.SET_NULL, blank=True, null=True)
     create_date = models.DateField(default=date.today)

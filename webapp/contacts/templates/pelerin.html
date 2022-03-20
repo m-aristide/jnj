@@ -19,7 +19,7 @@
         }
         @frame paroisse { /* Another static Frame */
             -pdf-frame-content: paroisse;
-            right: 35pt; top: 249pt; width: 86pt;
+            right: 35pt; top: 248pt; width: 86pt;
         }
         @frame diocese { /* Another static Frame */
             -pdf-frame-content: diocese;
@@ -73,7 +73,7 @@
         color: #000;font-size: 1.8rem;background-color: #fff;line-height: 12px;font-weight: bold;text-align: right;
     }
     #paroisse {
-        color: #000;font-size: 1rem;background-color: #fff;line-height: 12px;font-weight: bold;text-align: right;
+        color: #000;font-size: 1rem;background-color: #fff;line-height: 0px;font-weight: bold;text-align: right;
     }
     #qrcode {
         background-color: #fff;
@@ -164,8 +164,12 @@
     </div>
 
     <div id="site">
+        {% if part.paye %}  
         {{part.dortoir.site.designation}} <br>
         {{part.dortoir.code}}
+        {% else %}
+        Non <br> payé
+        {% endif %}
     </div>
 
     {% if part.photo %}

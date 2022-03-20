@@ -1,3 +1,5 @@
+var selectDiocese;
+var selectPersonOfDiocese;
 
 window.addEventListener('DOMContentLoaded', function codeAddress() {
     mainChart();
@@ -12,7 +14,7 @@ $(document).ready(function () {
         "language": {
             "lengthMenu": "Afficher _MENU_ par page",
             "zeroRecords": "Aucun participant",
-            "info": "Affichage page _PAGE_ sur _PAGES_",
+            "info": "Affichage page _PAGE_ sur _PAGES_ de _TOTAL_",
             "infoEmpty": "Aucun participant",
             "emptyTable": "Aucun participant",
             "infoFiltered": "(filtered from _MAX_ total records)",
@@ -28,18 +30,34 @@ $(document).ready(function () {
 });
 
 function actions() {
-    var selectDiocese = document.getElementById('diocese');
-    selectDiocese.onchange = function (e) {
-        window.location = '/inscrits/?diocese=' + selectDiocese.value + '&person_of_diocese=' + selectPersonOfDiocese.value;
+    selectDiocese = document.getElementById('diocese')
+    selectDiocese.onchange = build_url
+    selectPersonOfDiocese = document.getElementById('person-of-diocese');
+    selectPersonOfDiocese.onchange = build_url
+}
+
+function build_url() {
+    var params = [];
+
+    if(selectDiocese.value) {
+        params.push('diocese='+selectDiocese.value)
     }
-    var selectPersonOfDiocese = document.getElementById('person-of-diocese');
-    selectPersonOfDiocese.onchange = function (e) {
-        window.location = '/inscrits/?diocese=' + selectDiocese.value + '&person_of_diocese=' + selectPersonOfDiocese.value;
+
+
+    console.log(selectPersonOfDiocese.value)
+
+
+    if(selectPersonOfDiocese.value && selectPersonOfDiocese.value != 'all') {
+        params.push('person_of_diocese='+selectPersonOfDiocese.value)
     }
+
+    window.location = '/inscrits/'+ (params.length > 0 ? '?'+ params.join('&') : '' )
+
 }
 
 function chartOfDiocese() {
-    let chart = document.getElementById('chart-diocese');
+    "use strict";
+    var chart = document.getElementById('chart-diocese');
     new Chart(chart, {
         type: 'line',
         options: {
@@ -61,6 +79,7 @@ function chartOfDiocese() {
 }
 
 function chartByDiocese() {
+    "use strict";
     var chart = document.getElementById('chart-by-diocese');
     new Chart(chart, {
         type: 'pie',
@@ -82,7 +101,8 @@ function chartByDiocese() {
 }
 
 function mainChart() {
-    let chart = document.getElementById('main-chart');
+    "use strict";
+    var chart = document.getElementById('main-chart');
     new Chart(chart, {
         type: 'line',
         data: {

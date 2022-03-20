@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path
 
 from contacts.user import logout, connexion, login
-from contacts.views import index, add_contact, modifier_participant, delete_contact, inscrits, inscrit, check_badge_produit, delete_photo
+from contacts.views import index, add_contact, modifier_participant, delete_contact, inscrits 
+from contacts.views import inscrit, check_badge_produit, delete_photo, paiement_participant
 from dortoires.views import sites, ajouter_site, supprimer_site, supprimer_dortoir
 from contacts.views_encadreurs import encadreurs, creer_code_encadreur, delete_code_encadreur
 
@@ -32,7 +33,8 @@ urlpatterns = [
     path('check-badge-produit', check_badge_produit, name='check-badge-produit'),
     path('inscrits/', inscrits, name='inscrits'),
     path('inscrits/<int:id>', inscrit, name='inscrit'),
-    path('delete/<int:id>', delete_contact, name='delete-contact'),
+    path('paiement/<int:id>', paiement_participant, name='paiement-participant'),
+    path('delete/<int:id>', delete_contact, name='delete-participant'),
     path('delete-photo', delete_photo, name='remove-photo'),
 
     # encadreurs

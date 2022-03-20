@@ -2,6 +2,7 @@
 {% load static %}
 {% block css %}
 <link href="{% static 'css/cropper.min.css' %}" rel="stylesheet" >
+<link rel="stylesheet" href="{% static 'sweetalert2.min.css' %}">
 {% endblock %}
 {% block content %}
   <main class="no-bg">
@@ -171,11 +172,16 @@
           <div class="">
             <h3> {{person.code}} </h3>
             <p class="m-0">Enregistrement fait le : {{createdat}}</p>
+            {% if not person.paye %}
+            <p class="bg-danger text-white fw-bold"> Paiement en attente </p>
+            {% else %}
             <p>
                 Logement:
                 <strong>Site :</strong> {{person.dortoir.site.designation}} ({{person.dortoir.site.description}})  / 
                 <strong>Dortoir :</strong>{{person.dortoir.code}}
             </p>
+            <p class="bg-success bg-gradient text-white fw-bold">Paiement reçu</p>
+            {% endif %}
             {% if person.photo %}
             <img style="width: 150px;" class="p-1" src="{{person.photo}}">
             {% endif %}
@@ -185,24 +191,40 @@
                 <div class="col">
                   <a class="btn btn-primary"  target="_blank" href="{% static 'badges/' %}{{person.id}}.pdf">Télécharger le badge</a>
                 </div>
-                {% if person.photo %}
+                {% if person.photo and not person.produit %}
                 <div class="col">
                   <form action="{% url 'remove-photo' %}" method="post">
                     <input type="hidden" name="id" value="{{person.id}}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger"> Supprimer la photo</button>
+                    <button type="submit" class="btn btn-secondary"> Supprimer la photo</button>
                   </form>
                 </div>
                 {% endif %}
+              </div>
+              <div class="row mt-5">
                 {% if user.is_authenticated %}
+                {% if not person.paye %}
                 <div class="col">
-                  {% if not person.produit %}
-                  <form action="{% url 'check-badge-produit' %}" method="post">
+                  <form action="{% url 'paiement-participant' id=person.id %}" id="paye_participant" method="post">
+                    {% csrf_token %}
+                    <button type="button" onclick="paye_participant()" class="btn btn-danger"> Paiement reçu</button>
+                  </form>
+                </div>
+                {% endif %}
+                {% if not person.produit %}
+                <div class="col">
+                  <form action="{% url 'check-badge-produit' %}" id="badge_produit" method="post">
                     <input type="hidden" name="id" value="{{person.id}}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger"> Badget Produit</button>
+                    <button type="button" onclick="marquer_produit()" class="btn btn-success"> Badget Produit</button>
                   </form>
-                  {% endif %}
+                </div>
+                {% endif %}
+                <div class="col">
+                  <form action="{% url 'delete-participant' id=person.id %}" id="delete-participant" method="post">
+                    {% csrf_token %}
+                    <button type="button" onclick="supprimer_participant()" class="btn btn-danger"> Supprimer</button>
+                  </form>
                 </div>
                 {% endif %}
               </div>
@@ -216,5 +238,34 @@
 {% block scrit %}
   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/cropper.min.js' %}"></script>
+  <script src="{% static 'js/sweetalert2.all.min.js' %}"> </script>
   <script src="{% static 'js/photo.js' %}"></script>
+  <script>
+    function supprimer_participant() {
+      Swal.fire('Supprimer?', 'Ce participant sera définitivement supprimé seul son badge sera conservé !?', 'question')
+        .then(function (result) {
+          if (result.isConfirmed) {
+            document.getElementById('delete-participant').submit();
+          }
+        })
+    }
+
+    function marquer_produit() {
+      Swal.fire('Marquer comme produit?', 'Une fois le badge marqué comme produit, les informations ne seront plus modifiables !', 'question')
+        .then(function (result) {
+          if (result.isConfirmed) {
+            document.getElementById('badge_produit').submit();
+          }
+        })
+    }
+
+    function paye_participant() {
+      Swal.fire('Paiement reçu?', 'Vous confirmez avoir reçu le paiement de ce participant !', 'question')
+        .then(function (result) {
+          if (result.isConfirmed) {
+            document.getElementById('paye_participant').submit();
+          }
+        })
+    }
+  </script>
 {% endblock %}
