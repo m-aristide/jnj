@@ -17,6 +17,10 @@
             -pdf-frame-content: phone_number;
             right: 35pt; top: 215; width: 80pt;
         }
+        @frame backparoisse { /* Another static Frame */
+            -pdf-frame-content: backparoisse;
+            right: 35pt; top: 248pt; width: 86pt;
+        }
         @frame paroisse { /* Another static Frame */
             -pdf-frame-content: paroisse;
             right: 35pt; top: 248pt; width: 86pt;
@@ -75,6 +79,9 @@
     #paroisse {
         color: #000;font-size: 1rem;background-color: #fff;line-height: 0px;font-weight: bold;text-align: right;
     }
+    #backparoisse {
+        color: #fff; font-size: 1rem; background-color: #fff; line-height: 0px;
+    }
     #qrcode {
         background-color: #fff;
     }
@@ -82,7 +89,7 @@
         width: 60px;
     }
     #diocese {
-        color: #000;font-size: 1.8rem;line-height: 0px;background-color: #fff;font-weight: bold;
+        color: #000;font-size: 1.5rem;line-height: 0px;background-color: #fff;font-weight: bold;
     }
     #sexe {
         color: #000;font-size: 1.8rem;line-height: 0px;background-color: #fff;font-weight: bold;
@@ -133,6 +140,10 @@
 
     <div id="paroisse">
         {{part.paroisse}}
+    </div>
+
+    <div id="backparoisse">
+        . <br> .
     </div>
 
     <div id="diocese">

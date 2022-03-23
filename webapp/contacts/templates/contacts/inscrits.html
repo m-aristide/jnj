@@ -75,7 +75,7 @@
             <th>Téléphone</th>
             <th>Diocèse</th>
             <th>Paroisse</th>
-            <th>Genre</th>
+            <th>Genre - Type</th>
             <th>A contacter</th>
             <th>Badge</th>
             <th>Paiement</th>
@@ -86,21 +86,20 @@
           {% for user in users %}
           <tr>
             <th scope="row">{{user.code}}</th>
-            <th scope="row">{{user.dortoir.site.designation}} / {{user.dortoir.code}}</th>
+            <th scope="row">{{user.dortoir__site__designation}} / {{user.dortoir__code}}</th>
             <td>{{user.last_name}} {{user.first_name}}</td>
             <td>{{user.phone_number}}</td>
             <td>{{user.diocese}}</td>
             <td>{{user.paroisse}}</td>
-            <td>{{user.sexe}}</td>
+            <td>{{user.sexe}} - {{user.type}}</td>
             <td>{{user.person_contacter_name}} - {{user.person_contacter_phone}}</td>
             <td> {% if user.produit %} Imprimé {% else %} Non-produit {% endif %} </td>
-            <td> {% if user.paye %} Reçu {% else %} En attente {% endif %} </td>
+            <td> {% if user.paye %} Reçu {{user.paye}} {% else %} En attente {% endif %} </td>
             <td> <a class="btn btn-primary" href="{% url 'inscrit' id=user.id %}">Consulter</a></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-
     </div>
   </div>
 

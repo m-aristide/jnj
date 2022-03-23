@@ -2,13 +2,15 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 import random
 
+
+from contacts.constants import FIELDS
 from contacts.models import Participant, CodeEncadreur
 
 # Create your views here.
 
 @login_required(login_url='connexion')
 def encadreurs(request):
-    encadreurs = Participant.objects.exclude(encadreur__isnull=True).order_by('-pk')
+    encadreurs = Participant.objects.values(*FIELDS).exclude(encadreur__isnull=True).order_by('-pk')
     codes = CodeEncadreur.objects.all().order_by('-pk')
     return render(request, 'contacts/encadreurs.html', context={'encadreurs': encadreurs, 'codes': codes})
 

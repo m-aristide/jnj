@@ -5,12 +5,13 @@ from django.template.loader import get_template
 from pathlib import Path
 import io
 import base64
+from datetime import datetime
 
 from xhtml2pdf import pisa
 import qrcode 
 
 from contacts.models import Participant, CodeEncadreur
-from contacts.constants import DIOCESES, GROUPES_SANGUINS
+from contacts.constants import DIOCESES, GROUPES_SANGUINS, FIELDS
 from dortoires.models import Dortoire
 
 # Create your views here.
@@ -209,9 +210,9 @@ def inscrits(request):
     person_of_diocese = request.GET.get('person_of_diocese', None)
 
     if person_of_diocese :
-        users = Participant.objects.filter(diocese = person_of_diocese)
+        users = Participant.objects.values(*FIELDS).filter(diocese = person_of_diocese)
     else :
-        users = Participant.objects.all().order_by('-pk')
+        users = Participant.objects.values(*FIELDS).all().order_by('-pk')
 
     # répartition pour un diocese
     chart_of_diocese = Participant.objects.filter(diocese = diocese).values('create_date').annotate(total=Count('create_date')).order_by('create_date')
@@ -314,7 +315,7 @@ def paiement_participant(request, id:int) :
     part.dortoir.save()
 
     # celui qui valide la réception d'argent
-    part.paye = request.user.username
+    part.paye = datetime.now().strftime("%d/%m/%Y %H:%M") + 'GMT : ' + request.user.username
 
     part.save()
     render_pdf_view(part)

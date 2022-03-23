@@ -180,7 +180,7 @@
                 <strong>Site :</strong> {{person.dortoir.site.designation}} ({{person.dortoir.site.description}})  / 
                 <strong>Dortoir :</strong>{{person.dortoir.code}}
             </p>
-            <p class="bg-success bg-gradient text-white fw-bold">Paiement reçu</p>
+            <p class="bg-success bg-gradient text-white fw-bold">Paiement reçu ({{person.paye}})</p>
             {% endif %}
             {% if person.photo %}
             <img style="width: 150px;" class="p-1" src="{{person.photo}}">

@@ -12,12 +12,13 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">Code Accomp.</th>
-              <th scope="col">Nom</th>
-              <th scope="col">Prénom</th>
+              <th scope="col">Noms & Prénoms</th>
               <th scope="col">Téléphone</th>
               <th scope="col">Diocèse</th>
               <th scope="col">Paroisse</th>
-              <th scope="col">Genre</th>
+              <th scope="col">Genre - Type</th>
+              <th>Badge</th>
+              <th>Paiement</th>
               <th></th>
             </tr>
           </thead>
@@ -26,12 +27,13 @@
             <tr>
               <td>{{user.code}}</td>
               <td>{{user.encadreur}}</td>
-              <td>{{user.last_name}}</td>
-              <td>{{user.first_name}}</td>
+              <td>{{user.last_name}} {{user.first_name}}</td>
               <td>{{user.phone_number}}</td>
               <td>{{user.diocese}}</td>
               <td>{{user.paroisse}}</td>
-              <td>{{user.sexe}}</td>
+              <td>{{user.sexe}} - {{user.type}}</td>
+              <td> {% if user.produit %} Imprimé {% else %} Non-produit {% endif %} </td>
+              <td> {% if user.paye %} Reçu {{user.paye}} {% else %} En attente {% endif %} </td>
               <td> <a class="btn btn-primary" href="{% url 'inscrit' id=user.id %}">Consulter</a></td>
             </tr>
             {% endfor %}
@@ -77,7 +79,7 @@
         "language": {
           "lengthMenu": "Afficher _MENU_ par page",
           "zeroRecords": "Aucun accompagnateur",
-          "info": "Affichage page _PAGE_ sur _PAGES_",
+          "info": "Affichage page _PAGE_ sur _PAGES_ de _TOTAL_",
           "infoEmpty": "Aucun accompagnateur",
           "emptyTable": "Aucun accompagnateur",
           "infoFiltered": "(filtered from _MAX_ total records)",

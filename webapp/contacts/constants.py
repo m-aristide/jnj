@@ -29,3 +29,23 @@ DIOCESES = [
 ]
 
 GROUPES_SANGUINS = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
+
+
+FIELDS = [
+    'id',
+    'first_name',
+    'last_name',
+    'dortoir__code',
+    'dortoir__site__designation',
+    'code',
+    'person_contacter_name',
+    'person_contacter_phone',
+    'sexe',
+    'diocese',
+    'phone_number',
+    'paroisse',
+    'produit',
+    'paye',
+    'encadreur',
+    'type'
+]
