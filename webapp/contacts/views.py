@@ -83,7 +83,7 @@ def add_contact(request):
     return redirect(f'inscrits/{participant.pk}')
 
 # modifier les données d'un participant
-def modifier_participant(request):
+def modifier_participant(request, id: int):
     # verification id
     if not request.POST.get('id', None):
         request.session['alerte'] = {'success': False, 'message': 'Participant invalide'}

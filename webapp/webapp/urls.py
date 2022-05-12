@@ -29,7 +29,7 @@ urlpatterns = [
 
     path('', index, name='index'),
     path('add', add_contact, name='add-contact'),
-    path('update', modifier_participant, name='update-participant'),
+    path('update/<int:id>', modifier_participant, name='update-participant'),
     path('check-badge-produit', check_badge_produit, name='check-badge-produit'),
     path('inscrits/', inscrits, name='inscrits'),
     path('inscrits/<int:id>', inscrit, name='inscrit'),

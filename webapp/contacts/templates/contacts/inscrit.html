@@ -15,7 +15,7 @@
       {% endif %}
       <div class="row">
         <div class="col">
-          <form class="card p-3 " action="{% url 'update-participant' %}" method="post">
+          <form class="card p-3 " action="{% url 'update-participant' id=person.id%}" method="post">
 
             <h1 class="title p-3  text-center">Formulaire d'enregistrement <br> Registration form </h1>
 
