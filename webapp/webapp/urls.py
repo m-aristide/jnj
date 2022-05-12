@@ -20,7 +20,7 @@ from contacts.user import logout, connexion, login
 from contacts.views import index, add_contact, modifier_participant, delete_contact, inscrits 
 from contacts.views import inscrit, check_badge_produit, delete_photo, paiement_participant
 from dortoires.views import sites, ajouter_site, supprimer_site, supprimer_dortoir
-from contacts.views_encadreurs import encadreurs, creer_code_encadreur, delete_code_encadreur
+from encadreur.views import encadreurs, creer_code_encadreur, delete_code_encadreur
 
 urlpatterns = [
     path('logout', logout, name='logout'),

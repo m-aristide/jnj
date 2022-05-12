@@ -24,11 +24,5 @@ RUN pip install mysqlclient
 # Expose ports
 EXPOSE 8000
 
-# migration
-python manage.py migrate
-
-# copy static files
-python manage.py collectstatic
-
 # default command to execute    
 ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8000"]

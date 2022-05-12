@@ -10,7 +10,8 @@ from datetime import datetime
 from xhtml2pdf import pisa
 import qrcode 
 
-from contacts.models import Participant, CodeEncadreur
+from contacts.models import Participant
+from encadreur.models import CodeEncadreur
 from contacts.constants import DIOCESES, GROUPES_SANGUINS, FIELDS
 from dortoires.models import Dortoire
 
@@ -30,6 +31,7 @@ def index(request):
 
     return render(request, 'contacts/index.html', context=context)
 
+# ajouter un participant
 def add_contact(request):
     
     participant = Participant(
@@ -80,13 +82,17 @@ def add_contact(request):
     request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
     return redirect(f'inscrits/{participant.pk}')
 
+# modifier les données d'un participant
 def modifier_participant(request):
+    # verification id
     if not request.POST.get('id', None):
         request.session['alerte'] = {'success': False, 'message': 'Participant invalide'}
         return redirect(f'inscrits')
 
+    # récupération participant
     part = Participant.objects.get(pk=int(request.POST.get('id')))
 
+    # vérifier que le badge n'est pas encore produit, si oui on ne modifie plus
     if part.produit :
         request.session['alerte'] = {'success': False, 'message': 'Le badge de ce participant a déjà été produit. Ses informations ne peuvent plus être modifiées.'}
         return redirect(f'inscrits/{part.pk}')
@@ -204,6 +210,7 @@ def delete_contact(request, id:int):
     part.delete()
     return redirect('inscrits')
 
+# liste des inscrits
 @login_required(login_url='connexion')
 def inscrits(request):
     diocese = request.GET.get('diocese', 'Diocèse de Yaoundé')
@@ -255,6 +262,7 @@ def inscrits(request):
         'person_of_diocese': person_of_diocese
         })
 
+# récupérer un inscrit
 def inscrit(request, id: int):
     part = Participant.objects.get(pk=id)
     # make qrcode
@@ -282,6 +290,7 @@ def inscrit(request, id: int):
         'groupes_sangs': GROUPES_SANGUINS
         })
 
+# marquer badge produit
 @login_required(login_url='connexion')
 def check_badge_produit(request) :
     part = Participant.objects.get(pk=int(request.POST.get('id')))
@@ -290,6 +299,7 @@ def check_badge_produit(request) :
     request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
     return redirect(f'inscrits/{part.pk}')
 
+# supprimer photo badge
 def delete_photo(request) :
     part = Participant.objects.get(pk=int(request.POST.get('id')))
     part.photo = None
@@ -323,6 +333,7 @@ def paiement_participant(request, id:int) :
     request.session['alerte'] = {'success': True, 'message': 'Paiement enregistré !'}
     return redirect(f'/inscrits/{part.pk}')
 
+# attribution d'un dortoir par sexe
 def select_dortoir(sexe):
     dortoirs = [dortoir for dortoir in Dortoire.objects.all() if dortoir.occupation < dortoir.capacite ]
     if len(dortoirs) == 0 :

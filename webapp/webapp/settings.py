@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'active_link',
     'contacts',
+    'encadreur',
     'dortoires'
 ]
 
