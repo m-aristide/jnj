@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from contacts.user import logout, connexion, login
 from contacts.views import index, add_contact, modifier_participant, delete_contact, inscrits 
@@ -23,19 +24,19 @@ from dortoires.views import sites, ajouter_site, supprimer_site, supprimer_dorto
 from encadreur.views import encadreurs, creer_code_encadreur, delete_code_encadreur
 
 urlpatterns = [
-    path('logout', logout, name='logout'),
-    path('connexion', connexion, name='connexion'),
-    path('login', login, name='login'),
+    path('users/logout', logout, name='logout'),
+    path('users/connexion', connexion, name='connexion'),
+    path('users/login', login, name='login'),
 
     path('', index, name='index'),
-    path('add', add_contact, name='add-contact'),
-    path('update/<int:id>', modifier_participant, name='update-participant'),
-    path('check-badge-produit', check_badge_produit, name='check-badge-produit'),
-    path('inscrits/', inscrits, name='inscrits'),
+    path('inscrits', inscrits, name='inscrits'),
+    path('inscrits/add', add_contact, name='add-contact'),
+    path('inscrits/update/<int:id>', modifier_participant, name='update-participant'),
+    path('inscrits/check-badge-produit', check_badge_produit, name='check-badge-produit'),
     path('inscrits/<int:id>', inscrit, name='inscrit'),
-    path('paiement/<int:id>', paiement_participant, name='paiement-participant'),
-    path('delete/<int:id>', delete_contact, name='delete-participant'),
-    path('delete-photo', delete_photo, name='remove-photo'),
+    path('inscrits/paiement/<int:id>', paiement_participant, name='paiement-participant'),
+    path('inscrits/delete/<int:id>', delete_contact, name='delete-participant'),
+    path('inscrits/delete-photo', delete_photo, name='remove-photo'),
 
     # encadreurs
     path('encadreurs', encadreurs, name='encadreurs'),
@@ -45,8 +46,11 @@ urlpatterns = [
     # sites urls
     path('sites', sites, name='sites'),
     path('sites/<int:id>', sites, name='site-edit'),
-    path('ajouter-site', ajouter_site, name='ajouter-site'),
-    path('supprimer-site', supprimer_site, name='supprimer-site'),
-    path('supprimer-dortoir', supprimer_dortoir, name='supprimer-dortoir'),
+    path('sites/ajouter-site', ajouter_site, name='ajouter-site'),
+    path('sites/supprimer-site', supprimer_site, name='supprimer-site'),
+    path('sites/supprimer-dortoir', supprimer_dortoir, name='supprimer-dortoir'),
     path('admin/', admin.site.urls),
 ]
+
+# fichiers static
+urlpatterns += staticfiles_urlpatterns()

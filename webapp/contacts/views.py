@@ -152,7 +152,7 @@ def modifier_participant(request, id: int):
     part.save()
     render_pdf_view(part)
 
-    return redirect(f'inscrits/{part.pk}')
+    return redirect(f'/inscrits/{part.pk}')
 
 def code_generator(diocese: str, id: int): 
     return f'{diocese.split(" ").pop()[:4].upper()}-2022-JNJ-{"0000"[:4-len(str(id))]}{id}'
@@ -194,6 +194,7 @@ def render_pdf_view(part: Participant):
     # create a pdf
     pisa.CreatePDF(html, dest=result_file)
 
+#supprimer un participant
 @login_required(login_url='connexion')
 def delete_contact(request, id:int):
     part = Participant.objects.get(pk=id)
@@ -205,7 +206,8 @@ def delete_contact(request, id:int):
 
     # suppression code accompgnateur
     if part.encadreur : 
-        part.encadreur.delete()
+        code_encadeur = CodeEncadreur.objects.get(code = part.encadreur)
+        code_encadeur.delete()
 
     part.delete()
     return redirect('inscrits')
