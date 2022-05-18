@@ -80,14 +80,14 @@ def add_contact(request):
     render_pdf_view(participant)
 
     request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
-    return redirect(f'inscrits/{participant.pk}')
+    return redirect('inscrit', id=participant.pk)
 
 # modifier les données d'un participant
 def modifier_participant(request, id: int):
     # verification id
     if not request.POST.get('id', None):
         request.session['alerte'] = {'success': False, 'message': 'Participant invalide'}
-        return redirect(f'inscrits')
+        return redirect('inscrits')
 
     # récupération participant
     part = Participant.objects.get(pk=int(request.POST.get('id')))
@@ -95,7 +95,7 @@ def modifier_participant(request, id: int):
     # vérifier que le badge n'est pas encore produit, si oui on ne modifie plus
     if part.produit :
         request.session['alerte'] = {'success': False, 'message': 'Le badge de ce participant a déjà été produit. Ses informations ne peuvent plus être modifiées.'}
-        return redirect(f'inscrits/{part.pk}')
+        return redirect('inscrit', id=part.pk)
 
     part.first_name = request.POST.get('first_name').title()
     part.last_name = request.POST.get('last_name').upper()
@@ -121,7 +121,8 @@ def modifier_participant(request, id: int):
         dortoir = select_dortoir(request.POST.get('sexe'))
         if not dortoir :
             request.session['alerte'] = {'success': False, 'message': f'Enregistrement impossible : Tous les dortoirs {part.sexe} sont occupés  !'}
-            return redirect(f'inscrits/{part.pk}')
+            return redirect('inscrit', id=part.pk)
+            
 
     # code encadreur
     code = None
@@ -130,7 +131,7 @@ def modifier_participant(request, id: int):
             code = CodeEncadreur.objects.get(code = request.POST.get('encadreur'), active = False)
         except CodeEncadreur.DoesNotExist:
             request.session['alerte'] = {'success': False, 'message': f'Code accompagnateur invalide !'}
-            return redirect(f'inscrits/{part.pk}')
+            return redirect('inscrit', id=part.pk)
     
     # enregistrement code accompagnateur
     if code : 
@@ -152,7 +153,7 @@ def modifier_participant(request, id: int):
     part.save()
     render_pdf_view(part)
 
-    return redirect(f'/inscrits/{part.pk}')
+    return redirect('inscrit', id=part.pk)
 
 def code_generator(diocese: str, id: int): 
     return f'{diocese.split(" ").pop()[:4].upper()}-2022-JNJ-{"0000"[:4-len(str(id))]}{id}'
@@ -299,7 +300,7 @@ def check_badge_produit(request) :
     part.produit = True
     part.save()
     request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
-    return redirect(f'inscrits/{part.pk}')
+    return redirect('inscrit', id=part.pk)
 
 # supprimer photo badge
 def delete_photo(request) :
@@ -309,7 +310,7 @@ def delete_photo(request) :
     # production du badge
     render_pdf_view(part)
     request.session['alerte'] = {'success': True, 'message': 'Photo supprimée !'}
-    return redirect(f'inscrits/{part.pk}')
+    return redirect('inscrit', id=part.pk)
 
 @login_required(login_url='connexion')
 def paiement_participant(request, id:int) :
@@ -320,7 +321,7 @@ def paiement_participant(request, id:int) :
     # update occupation du dortoir
     if not part.dortoir :
         request.session['alerte'] = {'success': False, 'message': 'Enregistrement impossible : Tous les dortoirs sont occupés !'}
-        return redirect(f'inscrits/{part.pk}')
+        return redirect('inscrit', id=part.pk)
 
     # enregistrement dortoir
     part.dortoir.occupation +=1
@@ -333,7 +334,7 @@ def paiement_participant(request, id:int) :
     render_pdf_view(part)
 
     request.session['alerte'] = {'success': True, 'message': 'Paiement enregistré !'}
-    return redirect(f'/inscrits/{part.pk}')
+    return redirect('inscrit', id=part.pk)
 
 # attribution d'un dortoir par sexe
 def select_dortoir(sexe):

@@ -98,4 +98,4 @@ def supprimer_dortoir(request):
         dortoir.delete()
         request.session['alerte'] = {'success': True, 'message': 'Dortoir supprimé'}
     
-    return redirect('sites/'+request.POST.get('id_site'))
+    return redirect('site-edit', id = int(request.POST.get('id_site')))

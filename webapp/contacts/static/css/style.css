@@ -11,7 +11,7 @@ main {
 }
 .navbar {
     background-color: #0071ff;
-    padding: 16px;
+    /*padding: 16px;*/
     margin-bottom: 32px;
 }
 .carousel-item > img {
@@ -28,6 +28,11 @@ main {
     display: inline-block;
     padding: 20px;
     border-radius: 42%;
+}
+
+.logo {
+  height: 50px;
+  border-radius: 50%;
 }
 
 .title {

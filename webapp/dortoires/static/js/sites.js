@@ -40,7 +40,7 @@ function handle_ajouter_dortoir(dort) {
     dort = dort.id ? dort : false;
 
     var btn_delete = dort ? 
-    `<form action="/supprimer-dortoir" style="display: inline-block;" method="post">
+    `<form action="/sites/supprimer-dortoir" style="display: inline-block;" method="post">
         ${csrf}
         <input type="hidden" name="id" value="${dort.id}">
         <input type="hidden" name="id_site" value="${document.getElementById('id_site').value}">
