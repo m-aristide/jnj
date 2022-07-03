@@ -22,7 +22,7 @@ from contacts.views import index, add_contact, modifier_participant, delete_cont
 from contacts.views import inscrit, check_badge_produit, delete_photo, paiement_participant
 from dortoires.views import sites, ajouter_site, supprimer_site, supprimer_dortoir
 from encadreur.views import encadreurs, creer_code_encadreur, delete_code_encadreur
-from organisateurs.views import organisateurs, organisateur
+from organisateurs.views import organisateurs, organisateur, delete_organisateur
 
 urlpatterns = [
     path('users/logout', logout, name='logout'),
@@ -55,7 +55,8 @@ urlpatterns = [
     # organisateurs
     path('organisateurs', organisateurs, name='organisateurs'),
     path('organisateur', organisateur, name='organisateur'),
-    path('organisateur/<int:id>', organisateur, name='organisateur')
+    path('organisateurs/<int:id>', organisateur, name='organisateur_id'),
+    path('organisateur/<int:id>', delete_organisateur, name='delete-organisateur')
 ]
 
 # fichiers static

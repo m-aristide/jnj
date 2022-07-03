@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 {% load static %}
+{% block css %}
+<link href="{% static 'css/cropper.min.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'sweetalert2.min.css' %}">
+{% endblock %}
 {% block content %}
 <div class="container" style="margin-top: 120px;">
     {% if alerte %}
@@ -39,9 +43,14 @@
                     <td>{{org.commission}}</td>
                     <td>{{org.poste}}</td>
                     <td>
-                        <a class="btn btn-primary" href="{% url 'organisateur' id=org.pk %}">Consulter</a>
-                        <a class="btn btn-danger" target="_blank"
-                            href="{% static 'badges/org_' %}{{org.id}}.pdf">Télécharger le badge</a>
+                        <a class="btn btn-primary" href="{% url 'organisateur_id' id=org.pk %}">Consulter</a>
+                        <a class="btn btn-success" target="_blank"
+                            href="{% static 'badges/org_' %}{{org.id}}.pdf">Badge</a>
+                        <form action="{% url 'delete-organisateur' id=org.id %}" id="delete-organisateur" method="post">
+                            {% csrf_token %}
+                            <button type="button" onclick="supprimer_organisateur()" class="btn btn-danger">
+                                Supprimer</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -55,4 +64,16 @@
 {% endblock %}
 {% block scrit %}
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/cropper.min.js' %}"></script>
+<script src="{% static 'js/sweetalert2.all.min.js' %}"> </script>
+<script>
+    function supprimer_organisateur() {
+        Swal.fire('Supprimer?', 'Cet organisateur sera définitivement supprimé !?', 'question')
+            .then(function (result) {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-organisateur').submit();
+                }
+            })
+    }
+</script>
 {% endblock %}

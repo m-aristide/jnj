@@ -19,6 +19,8 @@ def organisateurs(request) :
         del request.session['alerte']
     return render(request, 'organisateurs.html', context={'organisateurs': organisateurs, 'alerte': alerte})
 
+
+@login_required(login_url='connexion')
 def organisateur(request, id=None) :
 
     organisateur = {}
@@ -46,9 +48,19 @@ def organisateur(request, id=None) :
         return redirect('organisateurs')
 
     else :
-        organisateur = Organisateur.objects.get(pk = id)
+        print(id)
+        if id :
+            organisateur = Organisateur.objects.get(pk = id)
 
     return render(request, 'organisateur.html', context={'org': organisateur})
+
+
+@login_required(login_url='connexion')
+def delete_organisateur(request, id:int):
+    organisateur = Organisateur.objects.get(pk = id)
+    organisateur.delete()
+    request.session['alerte'] = {'success': True, 'message': 'Opération effectuée avec succès'}
+    return redirect('organisateurs')
 
 def render_pdf_view(org: Organisateur):
     # html template
