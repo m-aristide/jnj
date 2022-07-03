@@ -34,6 +34,7 @@
 
         <ul class="nav nav-pills">
           {% if user.is_authenticated %}
+            <li class="nav-item"><a href="{% url 'organisateurs' %}" class="nav-link {% active_link 'organisateurs' %} {% active_link 'organisateur' %}">Organisateurs</a></li>
             <li class="nav-item"><a href="{% url 'encadreurs' %}" class="nav-link {% active_link 'encadreurs' %}">Accompagnateurs</a></li>
             <li class="nav-item"><a href="{% url 'sites' %}" class="nav-link {% active_link 'sites' %}">Sites</a></li>
             <li class="nav-item"><a href="{% url 'inscrits' %}" class="nav-link {% active_link 'inscrits' %}">Inscrits</a></li>

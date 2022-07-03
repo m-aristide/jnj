@@ -142,14 +142,13 @@ def modifier_participant(request, id: int):
     # enregistrement changement dortoir
     
     if dortoir :
-        part.sexe = request.POST.get('sexe')
         part.dortoir.occupation -=1
         part.dortoir.save()
         dortoir.occupation +=1
         dortoir.save()
         part.dortoir = dortoir
 
-
+    part.sexe = request.POST.get('sexe')
     part.save()
     render_pdf_view(part)
 

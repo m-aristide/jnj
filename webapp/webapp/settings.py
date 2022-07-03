@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'active_link',
     'contacts',
     'encadreur',
-    'dortoires'
+    'dortoires',
+    'organisateurs'
 ]
 
 MIDDLEWARE = [
